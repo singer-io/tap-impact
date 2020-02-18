@@ -15,7 +15,7 @@ def write_schema(catalog, stream_name):
     try:
         singer.write_schema(stream_name, schema, stream.key_properties)
     except OSError as err:
-        LOGGER.info('OS Error writing schema for: {}'.format(stream_name))
+        LOGGER.error('OS Error writing schema for: {}'.format(stream_name))
         raise err
 
 
@@ -23,12 +23,12 @@ def write_record(stream_name, record, time_extracted):
     try:
         singer.messages.write_record(stream_name, record, time_extracted=time_extracted)
     except OSError as err:
-        LOGGER.info('OS Error writing record for: {}'.format(stream_name))
-        LOGGER.info('record: {}'.format(record))
+        LOGGER.error('OS Error writing record for: {}'.format(stream_name))
+        LOGGER.error('record: {}'.format(record))
         raise err
     except TypeError as err:
-        LOGGER.info('Type Error writing record for: {}'.format(stream_name))
-        LOGGER.info('record: {}'.format(record))
+        LOGGER.error('Type Error writing record for: {}'.format(stream_name))
+        LOGGER.error('record: {}'.format(record))
         raise err
 
 
@@ -85,8 +85,8 @@ def process_records(catalog, #pylint: disable=too-many-branches
                         schema,
                         stream_metadata)
                 except Exception as err:
-                    LOGGER.info('ERROR: {}'.format(err))
-                    LOGGER.info('ERROR Record: {}'.format(json.dumps(record)))
+                    LOGGER.error('ERROR: {}'.format(err))
+                    LOGGER.error('ERROR Record: {}'.format(json.dumps(record)))
                     raise Exception(err)
 
                 # Reset max_bookmark_value to new value if higher
