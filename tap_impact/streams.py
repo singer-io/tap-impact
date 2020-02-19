@@ -85,6 +85,12 @@ STREAMS = {
                 'replication_method': 'FULL_TABLE',
                 'parent': 'campaign'
             },
+            'conversion_paths': {
+                'path': 'Campaigns/{}/Models/<model_id>/ConversionPaths',
+                'data_key': 'ConversionPaths',
+                'key_properties': ['uri'],
+                'replication_method': 'FULL_TABLE'
+            },
             'media_partner_groups': {
                 'path': 'Campaigns/{}/MediaPartnerGroups',
                 'data_key': 'Groups',
