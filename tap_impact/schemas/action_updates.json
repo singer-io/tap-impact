@@ -42,11 +42,11 @@
     },
     "delta_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "delta_payout": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "disposition": {
       "type": ["null", "string"]

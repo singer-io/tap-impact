@@ -50,11 +50,11 @@
     },
     "expected_payout": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "final_payout": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "id": {
       "type": ["null", "integer"]
@@ -90,7 +90,7 @@
     },
     "transaction_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "transaction_date": {
       "type": ["null", "string"],

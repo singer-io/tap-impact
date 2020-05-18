@@ -287,10 +287,10 @@ def sync_endpoint(client,
             if children:
                 for child_stream_name, child_endpoint_config in children.items():
                     if child_stream_name in selected_streams:
-                        model_id = config.get('model_id')
+                        model_id = config.get('model_id', '')
                         process_child = True
                         # conversion_paths endpoint requires model_id tap config param
-                        if child_stream_name == 'conversion_paths' and not(model_id):
+                        if child_stream_name == 'conversion_paths' and model_id == '':
                             process_child = False
                         if process_child: 
                             write_schema(catalog, child_stream_name)

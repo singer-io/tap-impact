@@ -67,7 +67,7 @@
     },
     "current_price": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "description": {
       "type": ["null", "string"]
@@ -94,7 +94,7 @@
     },
     "inventory": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "is_parent": {
       "type": ["null", "boolean"]
@@ -121,7 +121,7 @@
     },
     "manufacturing_cost": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "material": {
       "type": ["null", "string"]
@@ -131,15 +131,15 @@
     },
     "money1": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "money2": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "money3": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "mpn": {
       "type": ["null", "string"]
@@ -152,15 +152,15 @@
     },
     "numeric1": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "numeric2": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "numeric3": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "original_format_category": {
       "type": ["null", "string"]
@@ -170,7 +170,7 @@
     },
     "original_price": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "parent_name": {
       "type": ["null", "string"]
@@ -183,36 +183,36 @@
     },
     "product_bid": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "shipping_height": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "shipping_label": {
       "type": ["null", "string"]
     },
     "shipping_length": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "shipping_length_unit": {
       "type": ["null", "string"]
     },
     "shipping_rate": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "shipping_weight": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "shipping_weight_unit": {
       "type": ["null", "string"]
     },
     "shipping_width": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "size": {
       "type": ["null", "string"]
@@ -240,7 +240,7 @@
     },
     "weight": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "weight_unit": {
       "type": ["null", "string"]

@@ -23,11 +23,11 @@
     },
     "revenue": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "cost": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "media_count": {
       "type": ["null", "integer"]
@@ -204,7 +204,7 @@
               },
               "attributed_revenue": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "action_id": {
                 "type": ["null", "string"]
@@ -239,35 +239,35 @@
               },
               "amount": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "payout": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "order_margin": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "order_discount": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "order_shipping": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "order_tax": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "order_vat": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "order_subtotal": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "note": {
                 "type": ["null", "string"]
@@ -295,15 +295,15 @@
               },
               "money_1": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "money_2": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "money_3": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "date_1": {
                 "type": ["null", "string"],

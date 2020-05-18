@@ -41,7 +41,7 @@
               },
               "net_item_amount": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "paid_date": {
                 "type": ["null", "string"],
@@ -52,11 +52,11 @@
               },
               "total_item_amount": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "vat_item_amount": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               }
             }
           }
@@ -77,11 +77,11 @@
     },
     "total_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "total_vat_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     }
   }
 }
