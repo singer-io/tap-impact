@@ -292,7 +292,7 @@ def sync_endpoint(client,
                         # conversion_paths endpoint requires model_id tap config param
                         if child_stream_name == 'conversion_paths' and model_id == '':
                             process_child = False
-                        if process_child: 
+                        if process_child:
                             write_schema(catalog, child_stream_name)
                             # For each parent record
                             for record in transformed_data:

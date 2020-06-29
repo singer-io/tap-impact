@@ -1,0 +1,61 @@
+version: 4
+jobs:
+  build:
+    docker:
+      - image: 218546966473.dkr.ecr.us-east-1.amazonaws.com/circle-ci:tap-tester
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -m venv /usr/local/share/virtualenvs/tap-impact
+            source /usr/local/share/virtualenvs/tap-impact/bin/activate
+            pip install --upgrade pip
+            pip install .[dev]
+      - run:
+          name: 'pylint'
+          command: |
+            source /usr/local/share/virtualenvs/tap-impact/bin/activate
+            pylint tap_impact -d 'broad-except,chained-comparison,empty-docstring,fixme,invalid-name,line-too-long,missing-class-docstring,missing-function-docstring,missing-module-docstring,no-else-raise,no-else-return,too-few-public-methods,too-many-arguments,too-many-branches,too-many-lines,too-many-locals,ungrouped-imports,wrong-spelling-in-comment,wrong-spelling-in-docstring,logging-format-interpolation,protected-access,unused-variable,too-many-statements,redefined-builtin,too-many-nested-blocks,useless-object-inheritance,inconsistent-return-statements'
+      - run:
+          name: 'JSON Validator'
+          command: |
+            source /usr/local/share/virtualenvs/tap-tester/bin/activate
+            stitch-validate-json /usr/local/share/virtualenvs/tap-impact/lib/python3.5/site-packages/tap_impact/schemas/*.json
+      # - run:
+      #     name: 'Unit Tests'
+      #     command: |
+      #       source ~/.virtualenvs/tap-impact/bin/activate
+      #       pip install nose
+      #       nosetests
+      # - add_ssh_keys
+      # - run:
+      #     name: 'Integration Tests'
+      #     command: |
+      #       aws s3 cp s3://com-stitchdata-dev-deployment-assets/environments/tap-tester/sandbox dev_env.sh
+      #       source dev_env.sh
+      #       source /usr/local/share/virtualenvs/tap-tester/bin/activate
+      #       run-a-test --tap=tap-impact \
+      #                  --target=target-stitch \
+      #                  --orchestrator=stitch-orchestrator \
+      #                  --email=harrison+sandboxtest@stitchdata.com \
+      #                  --password=$SANDBOX_PASSWORD \
+      #                  --client-id=50 \
+      #                  tap_tester.suites.impact
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build:
+          context: circleci-user
+  build_daily:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build:
+          context: circleci-user
