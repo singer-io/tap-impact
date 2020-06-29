@@ -11,7 +11,7 @@ def discover(config):
     for stream_name, schema_dict in schemas.items():
         process_stream = True
         # conversion_paths endpoint requires model_id tap config param
-        if stream_name == 'conversion_paths' and not(model_id):
+        if stream_name == 'conversion_paths' and not model_id:
             process_stream = False
         if process_stream:
             schema = Schema.from_dict(schema_dict)

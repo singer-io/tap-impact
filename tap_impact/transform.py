@@ -67,7 +67,7 @@ def transform_conversion_paths(this_json, data_key):
                 event.pop('oid', None)
                 event['order_id'] = order_id
                 this_json[data_key][i]['events'].append(event)
-        
+
         referral_counts = record.get('referral_counts')
         referral_counts_list = []
         if isinstance(referral_counts, list):
@@ -91,7 +91,7 @@ def transform_json(this_json, stream_name, data_key):
     converted_data_key = convert(data_key)
     if stream_name in ('actions', 'action_updates'):
         transformed_json = replace_order_id(converted_json, converted_data_key)[converted_data_key]
-    if stream_name in ('conversion_paths'):
+    if stream_name in ['conversion_paths']:
         transformed_json = transform_conversion_paths(converted_json, converted_data_key)[converted_data_key]
     else:
         transformed_json = converted_json[converted_data_key]
