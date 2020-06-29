@@ -28,14 +28,14 @@
     },
     "bogo_get_discount_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "bogo_get_discount_currency": {
       "type": ["null", "string"]
     },
     "bogo_get_discount_percent": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "bogo_get_discount_type": {
       "type": ["null", "string"]
@@ -69,7 +69,7 @@
     },
     "customisation_charge": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "deal_categories": {
       "type": ["null", "string"]
@@ -100,14 +100,14 @@
             "properties": {
               "product_after_price_amount": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "product_after_price_currency": {
                 "type": ["null", "string"]
               },
               "product_before_price_amount": {
                 "type": ["null", "number"],
-                "multipleOf": 1e-2
+                "multipleOf": 1e-8
               },
               "product_before_price_currency": {
                 "type": ["null", "string"]
@@ -170,26 +170,26 @@
     },
     "discount_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "discount_currency": {
       "type": ["null", "string"]
     },
     "discount_maximum_percent": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "discount_percent": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "discount_percent_range_end": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "discount_percent_range_start": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "discount_type": {
       "type": ["null", "string"]
@@ -228,14 +228,14 @@
     },
     "maximum_savings_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "maximum_savings_currency": {
       "type": ["null", "string"]
     },
     "minimum_purchase_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "minimum_purchase_amount_currency": {
       "type": ["null", "string"]
@@ -257,7 +257,7 @@
     },
     "rebate_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "rebate_currency": {
       "type": ["null", "string"]

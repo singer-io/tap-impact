@@ -19,6 +19,7 @@ This tap:
     - [Action Updates](https://developer.impact.com/default#operations-Action_Updates-ListActionUpdates)
     - [Clicks](https://developer.impact.com/default#operations-Clicks-GetClicks)
     - [Contacts](https://developer.impact.com/default#operations-Contacts-GetContacts)
+    - [Conversion Paths](https://developer.impact.com/default/documentation/Rest-Adv-v8#operations-Conversion_Paths-GetConversionPaths)
     - [Notes](https://developer.impact.com/default#operations-Notes-GetNotes)
     - [Media Partner Groups](https://developer.impact.com/default#operations-Partner_Groups-GetMediaPartnerGroups)
   - [Ads](https://developer.impact.com/default#operations-Ads-ListAds)
@@ -46,12 +47,12 @@ This tap:
 [actions](https://developer.impact.com/default#operations-Actions-GetActions)
 - Endpoint: https://api.impact.com/{api_catalog}/{account_sid}/Actions
 - Primary key fields: id
-- Foreign key fields: ad_id, caller_id, campaign_id, customer_id, media_partner_id, shared_id
+- Foreign key fields: ad_id, caller_id, campaign_id, customer_id, media_partner_id, shared_id, order_id
 - Replication strategy: INCREMENTAL (Query filtered)
   - Filter: CampaignId (parent)
   - Filter: StartDate (event_date)
   - Bookmark: event_date
-- Transformations: camelCase to snake_case
+- Transformations: camelCase to snake_case, oid to order_id
 - Parent: campaigns
 
 [action_inquiries](https://developer.impact.com/default#operations-Action_Inquiries-GetActionInquiries)
@@ -62,7 +63,7 @@ This tap:
   - Filter: CampaignId (parent)
   - Filter: StartDate (creation_date)
   - Bookmark: creation_date
-- Transformations: camelCase to snake_case
+- Transformations: camelCase to snake_case, oid to order_id
 - Parent: campaigns
 
 [action_updates](https://developer.impact.com/default#operations-Action_Updates-ListActionUpdates)
@@ -132,6 +133,14 @@ This tap:
 - Foreign key fields: campaign_id, accounts > id
 - Replication strategy: FULL_TABLE (ALL for parent Campaign)
 - Transformations: camelCase to snake_case, add campaign_id (parent id)
+- Parent: campaigns
+
+[conversion_paths](https://developer.impact.com/default/documentation/Rest-Adv-v8#operations-Conversion_Paths-GetConversionPaths)
+- Endpoint: https://api.impact.com/{api_catalog}/{account_sid}/Campaigns/{campaign_id}/Models/{model_id}/ConversionPaths
+- Primary key fields: model_id, campaign_id, customer_id
+- Foreign key fields: campaign_id, customer_id, events: ad_id, action_id, media_id, order_id
+- Replication strategy: FULL_TABLE (ALL for parent Campaign)
+- Transformations: camelCase to snake_case, oid to order_id
 - Parent: campaigns
 
 [deals](https://developer.impact.com/default#operations-Deals-GetDeals)
@@ -271,12 +280,13 @@ This tap:
     - [singer-tools](https://github.com/singer-io/singer-tools)
     - [target-stitch](https://github.com/singer-io/target-stitch)
 
-3. Create your tap's `config.json` file. The `api_catalog` is one of the following: Advertisers, Agencies, Partners. The `account_sid` and `auth_token` may be found in your user settings when API access is enabled.
+3. Create your tap's `config.json` file. The `api_catalog` is one of the following: Advertisers, Agencies, Partners. The `account_sid` and `auth_token` may be found in your user settings when API access is enabled. Contact **Impact Support** to get your `model_id` (for Conversion Paths endpoint).
     ```json
     {
         "account_sid": "YOUR_API_ACCOUNT_SID",
         "auth_token": "YOUR_API_AUTH_TOKEN",
         "api_catalog": "YOUR_API_CATALOG",
+        "model_id": "YOUR_MODEL_ID",
         "start_date": "2019-01-01T00:00:00Z",
         "user_agent": "tap-impact <api_user_email@your_company.com>"
     }

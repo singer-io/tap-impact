@@ -34,7 +34,7 @@
     },
     "cpc_bid": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "customer_area": {
       "type": ["null", "string"]
@@ -93,7 +93,7 @@
     },
     "payout": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "product_sku": {
       "type": ["null", "string"]

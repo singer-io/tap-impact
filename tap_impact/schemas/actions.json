@@ -13,7 +13,7 @@
     },
     "amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "caller_id": {
       "type": ["null", "string"]
@@ -30,7 +30,7 @@
     },
     "client_cost": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "creation_date": {
       "type": ["null", "string"],
@@ -62,11 +62,11 @@
     },
     "delta_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "delta_payout": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "event_date": {
       "type": ["null", "string"],
@@ -77,11 +77,11 @@
     },
     "intended_amount": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "intended_payout": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "ip_address": {
       "type": ["null", "string"]
@@ -99,12 +99,12 @@
     "note": {
       "type": ["null", "string"]
     },
-    "oid": {
+    "order_id": {
       "type": ["null", "string"]
     },
     "payout": {
       "type": ["null", "number"],
-      "multipleOf": 1e-2
+      "multipleOf": 1e-8
     },
     "promo_code": {
       "type": ["null", "string"]
