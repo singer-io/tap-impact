@@ -42,7 +42,7 @@
     "customer_city": {
       "type": ["null", "string"]
     },
-    "customer_country\"": {
+    "customer_country": {
       "type": ["null", "string"]
     },
     "customer_region": {
