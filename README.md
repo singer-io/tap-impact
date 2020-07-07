@@ -127,6 +127,13 @@ This tap:
 - Transformations: camelCase to snake_case
 - Parent: campaigns
 
+[company_information](https://developer.impact.com/default#operations-Company_Information-GetCompanyInfo)
+- Endpoint: https://api.impact.com/{api_catalog}/{account_sid}/CompanyInformation
+- Primary key fields: company_name
+- Foreign key fields: None
+- Replication strategy: FULL_TABLE
+- Transformations: camelCase to snake_case
+
 [contacts](https://developer.impact.com/default#operations-Contacts-GetContacts)
 - Endpoint: https://api.impact.com/{api_catalog}/{account_sid}/Campaigns/{campaign_id}/Contacts
 - Primary key fields: id
