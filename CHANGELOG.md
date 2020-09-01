@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.0
+  * Added circle, pylint, and bumped to 1.0.0 for GA release
+
 ## 0.0.4
   * Fix issue for `conversion_paths`. Increase JSON schema decimal digits to `multipleOf` = `1e-8`.
 
