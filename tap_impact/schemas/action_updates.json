@@ -35,7 +35,7 @@
       "type": ["null", "string"]
     },
     "customer_id": {
-      "type": ["null", "integer"]
+      "type": ["null", "string"]
     },
     "customer_status": {
       "type": ["null", "string"]
