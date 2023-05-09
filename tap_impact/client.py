@@ -128,9 +128,9 @@ class ImpactClient(object):
         if self.__account_sid is None or self.__auth_token is None:
             raise Exception('Error: Missing account_sid or auth_token in config.json.')
         if self.__account_sid is None:
-            raise Exception('Error: Missing account_sid in cofig.json.')
+            raise Exception('Error: Missing account_sid in config.json.')
         if self.__api_catalog is None:
-            raise Exception('Error: Missing api_catalog in cofig.json.')
+            raise Exception('Error: Missing api_catalog in config.json.')
         headers = {}
         # Endpoint: simple API call to return a single record (CompanyInformation) to test access
         # https://developer.impact.com/default/documentation/Rest-Adv-v8#operations-Company_Information-GetCompanyInfo
@@ -163,7 +163,7 @@ class ImpactClient(object):
             self.__verified = self.check_access()
 
         if not version:
-            version = 'v2'
+            version = 'v10'
 
         if not url and path:
             url = '{}/{}.json'.format(self.base_url, path)
