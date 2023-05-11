@@ -15,7 +15,7 @@ setup(name='tap-impact',
       ],
       extras_require={
           'dev': [
-              'ipdb==0.11',
+              'ipdb',
               'pylint==2.5.3'
           ]
       },
