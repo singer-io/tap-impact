@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1
+  * Fix `replace() argument 2 must be str, not None` error when model_id is not configured []()
+
 ## 1.0.0
   * Added circle, pylint, and bumped to 1.0.0 for GA release
 
