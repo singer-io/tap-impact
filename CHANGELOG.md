@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.1
+  * Fix model_id parsing error when it is not configured [#22](https://github.com/singer-io/tap-impact/pull/22)
+
 ## 1.0.0
   * Added circle, pylint, and bumped to 1.0.0 for GA release
 
