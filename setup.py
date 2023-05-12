@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='tap-impact',
-      version='1.0.0',
+      version='1.0.2',
       description='Singer.io tap for extracting data from the Impact Advertiser, Partner, Agency APIs',
       author='jeff.huth@bytecode.io',
       classifiers=['Programming Language :: Python :: 3 :: Only'],
@@ -15,7 +15,7 @@ setup(name='tap-impact',
       ],
       extras_require={
           'dev': [
-              'ipdb==0.11',
+              'ipdb',
               'pylint==2.5.3'
           ]
       },
