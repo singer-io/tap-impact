@@ -16,7 +16,7 @@ This tap:
   - [Campaigns](https://developer.impact.com/default#operations-Campaigns-GetCampaigns)
     - [Actions](https://developer.impact.com/default#operations-Actions-GetActions)
     - [Action Inquiries](https://developer.impact.com/default#operations-Action_Inquiries-GetActionInquiries)
-    - [Action Updates](https://developer.impact.com/default#operations-Action_Updates-ListActionUpdates)
+    - [Action Updates](https://integrations.impact.com/impact-brand/reference/list-all-action-updates)
     - [Clicks](https://developer.impact.com/default#operations-Clicks-GetClicks)
     - [Contacts](https://developer.impact.com/default#operations-Contacts-GetContacts)
     - [Conversion Paths](https://developer.impact.com/default/documentation/Rest-Adv-v8#operations-Conversion_Paths-GetConversionPaths)
