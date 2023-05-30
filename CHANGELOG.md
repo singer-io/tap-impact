@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1
+  * Dependabot update [#25](https://github.com/singer-io/tap-impact/pull/25)
+
 ## 2.0.0
   * Updates integer datatype to String in action_updates schema [#21](hhttps://github.com/singer-io/tap-impact/pull/21)
 
