@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0
+  * Updates integer datatype to String in action_updates schema [#21](hhttps://github.com/singer-io/tap-impact/pull/21)
+
+## 1.0.2
+  * Sets empty string as default value for model_id if not configured [#23](https://github.com/singer-io/tap-impact/pull/23)
+
+## 1.0.1
+  * Fix model_id parsing error when it is not configured [#22](https://github.com/singer-io/tap-impact/pull/22)
+
 ## 1.0.0
   * Added circle, pylint, and bumped to 1.0.0 for GA release
 
