@@ -85,6 +85,13 @@ STREAMS = {
                 'replication_method': 'FULL_TABLE',
                 'parent': 'campaign'
             },
+            'contracts': {
+                'path': 'Campaigns/{}/Contracts',
+                'data_key': 'Contracts',
+                'key_properties': ['id'],
+                'replication_method': 'FULL_TABLE',
+                'parent': 'campaign'
+            },
             'conversion_paths': {
                 'path': 'Campaigns/{}/Models/<model_id>/ConversionPaths',
                 'data_key': 'ConversionPaths',
