@@ -128,7 +128,7 @@
     "id": {
       "type": ["null", "integer"]
     },
-    "identity_collapsing": {
+    "identity_matching": {
       "type": ["null", "string"]
     },
     "impression_tracking": {
@@ -196,7 +196,17 @@
       "type": ["null", "string"]
     },
     "shipping_regions": {
-      "type": ["null", "string"]
+      "anyOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": ["null", "string"]
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "short_description": {
       "type": ["null", "string"]
@@ -215,6 +225,9 @@
     },
     "trademark_bidding": {
       "type": ["null", "boolean"]
+    },
+    "uri": {
+      "type": ["null", "string"]
     },
     "view_through_crediting": {
       "type": ["null", "boolean"]
