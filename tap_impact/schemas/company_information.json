@@ -121,7 +121,7 @@
       "additionalProperties": false,
       "properties": {
         "industry_id": {
-          "type": ["null", "integer"]
+          "type": ["null", "string"]
         },
         "industry_name": {
           "type": ["null", "string"]
@@ -166,7 +166,7 @@
           "type": ["null", "string"]
         },
         "user_id": {
-          "type": ["null", "integer"]
+          "type": ["null", "string"]
         },
         "work_phone_number": {
           "type": ["null", "string"]

@@ -1,0 +1,632 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "brand_signatory": {
+      "type": ["null", "string"]
+    },
+    "brand_signatory_date": {
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
+    "date_created": {
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
+    "date_last_updated": {
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
+    "end_date": {
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
+    "id": {
+      "type": ["null", "string"]
+    },
+    "partner_id": {
+      "type": ["null", "integer"]
+    },
+    "partner_signatory": {
+      "type": ["null", "string"]
+    },
+    "partner_signatory_date": {
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
+    "partner_value1": {
+      "type": ["null", "string"]
+    },
+    "pdf_uri": {
+      "type": ["null", "string"]
+    },
+    "start_date": {
+      "type": ["null", "string"],
+      "format": "date-time"
+    },
+    "status": {
+      "type": ["null", "string"]
+    },
+    "template_terms": {
+      "type": ["null", "object"],
+      "additionalProperties": false,
+      "properties": {
+        "action_limit": {
+          "type": ["null", "integer"]
+        },
+        "action_limit_period": {
+          "type": ["null", "string"]
+        },
+        "change_notification_period": {
+          "type": ["null", "integer"]
+        },
+        "contract_start_slotting_fee": {
+          "type": ["null", "number"],
+          "multipleOf": 1e-8
+        },
+        "currency": {
+          "type": ["null", "string"]
+        },
+        "custom_creative_payer": {
+          "type": ["null", "string"]
+        },
+        "events_payouts": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "credit_policy": {
+                    "type": ["null", "string"]
+                  },
+                  "default_payout": {
+                    "type": ["null", "number"],
+                    "multipleOf": 1e-8
+                  },
+                  "default_payout_rate": {
+                    "type": ["null", "number"],
+                    "multipleOf": 1e-8
+                  },
+                  "event_category": {
+                    "type": ["null", "string"]
+                  },
+                  "event_type_id": {
+                    "type": ["null", "integer"]
+                  },
+                  "event_type_name": {
+                    "type": ["null", "string"]
+                  },
+                  "limits": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "limit_by": {
+                              "type": ["null", "string"]
+                            },
+                            "period": {
+                              "type": ["null", "string"]
+                            },
+                            "type": {
+                              "type": ["null", "string"]
+                            },
+                            "subtype": {
+                              "type": ["null", "string"]
+                            },
+                            "value": {
+                              "type": ["null", "number"],
+                              "multipleOf": 1e-8
+                            },
+                            "weekend_override_value": {
+                              "type": ["null", "integer"]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "location_requirement_countries": {
+                    "type": ["null", "string"]
+                  },
+                  "location_requirement_type": {
+                    "type": ["null", "string"]
+                  },
+                  "locking": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "basis": {
+                              "type": ["null", "string"]
+                            },
+                            "day_of_month": {
+                              "type": ["null", "integer"]
+                            },
+                            "day_offset": {
+                              "type": ["null", "integer"]
+                            },
+                            "max_months_open_ended_period": {
+                              "type": ["null", "integer"]
+                            },
+                            "month_offset": {
+                              "type": ["null", "integer"]
+                            },
+                            "open_ended_autolocking_mode": {
+                              "type": ["null", "string"]
+                            },
+                            "period": {
+                              "type": ["null", "string"]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "payouts_adjustments": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "amount": {
+                              "type": ["null", "number"],
+                              "multipleOf": 1e-8
+                            },
+                            "direction": {
+                              "type": ["null", "string"]
+                            },
+                            "id": {
+                              "type": ["null", "string"]
+                            },
+                            "rate": {
+                              "type": ["null", "integer"]
+                            },
+                            "rules": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "operator": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "variable": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "values": {
+                                        "anyOf": [
+                                          {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object"
+                                            }
+                                          },
+                                          {
+                                            "type": ["null", "string"]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "payouts_groups": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "id": {
+                              "type": ["null", "string"]
+                            },
+                            "limits": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "limit_by": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "period": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "type": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "subtype": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "value": {
+                                        "type": ["null", "number"],
+                                        "multipleOf": 1e-8
+                                      },
+                                      "weekend_override_value": {
+                                        "type": ["null", "integer"]
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "payout": {
+                              "type": ["null", "number"],
+                              "multipleOf": 1e-8
+                            },
+                            "payout_rate": {
+                              "type": ["null", "integer"]
+                            },
+                            "rank": {
+                              "type": ["null", "integer"]
+                            },
+                            "rules": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "operator": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "variable": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "values": {
+                                        "anyOf": [
+                                          {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object"
+                                            }
+                                          },
+                                          {
+                                            "type": ["null", "string"]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "tiers": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "action_threshold": {
+                                        "type": ["null", "integer"]
+                                      },
+                                      "parent_tier": {
+                                        "type": ["null", "integer"]
+                                      },
+                                      "payout": {
+                                        "type": ["null", "number"],
+                                        "multipleOf": 1e-8
+                                      },
+                                      "payout_rate": {
+                                        "type": ["null", "number"],
+                                        "multipleOf": 1e-8
+                                      },
+                                      "revenue_threshold": {
+                                        "type": ["null", "number"],
+                                        "multipleOf": 1e-8
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "payout_level": {
+                    "type": ["null", "string"]
+                  },
+                  "payout_restrictions": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "id": {
+                              "type": ["null", "string"]
+                            },
+                            "rules": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "operator": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "variable": {
+                                        "type": ["null", "string"]
+                                      },
+                                      "values": {
+                                        "anyOf": [
+                                          {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object"
+                                            }
+                                          },
+                                          {
+                                            "type": ["null", "string"]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "payout_scheduling": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "basis": {
+                              "type": ["null", "string"]
+                            },
+                            "day_offset": {
+                              "type": ["null", "integer"]
+                            },
+                            "month_offset": {
+                              "type": ["null", "integer"]
+                            },
+                            "period": {
+                              "type": ["null", "string"]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "performance_bonus": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "basis": {
+                              "type": ["null", "string"]
+                            },
+                            "bonus_tiers": {
+                              "anyOf": [
+                                {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                      "action_threshold": {
+                                        "type": ["null", "integer"]
+                                      },
+                                      "payout": {
+                                        "type": ["null", "number"],
+                                        "multipleOf": 1e-8
+                                      },
+                                      "payout_rate": {
+                                        "type": ["null", "number"],
+                                        "multipleOf": 1e-8
+                                      },
+                                      "revenue_threshold": {
+                                        "type": ["null", "number"],
+                                        "multipleOf": 1e-8
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "period": {
+                              "type": ["null", "string"]
+                            },
+                            "type": {
+                              "type": ["null", "string"]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "valid_referrals": {
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "type": {
+                              "type": ["null", "string"]
+                            },
+                            "window": {
+                              "type": ["null", "integer"]
+                            },
+                            "window_unit": {
+                              "type": ["null", "string"]
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "first_action_slotting_fee": {
+          "type": ["null", "number"],
+          "multipleOf": 1e-8
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": ["null", "string"]
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max_return_percentage": {
+          "type": ["null", "number"],
+          "multipleOf": 1e-8
+        },
+        "min_earning_per_click": {
+          "type": ["null", "number"],
+          "multipleOf": 1e-8
+        },
+        "monthly_slotting_fee": {
+          "type": ["null", "number"],
+          "multipleOf": 1e-8
+        },
+        "name": {
+          "type": ["null", "string"]
+        },
+        "return_policy": {
+          "type": ["null", "string"]
+        },
+        "special_terms_list": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "terms_content": {
+                    "type": ["null", "string"]
+                  },
+                  "terms_name": {
+                    "type": ["null", "string"]
+                  },
+                  "terms_pdf_uri": {
+                    "type": ["null", "string"]
+                  },
+                  "terms_type": {
+                    "type": ["null", "string"]
+                  }
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "spend_limit": {
+          "type": ["null", "number"],
+          "multipleOf": 1e-8
+        },
+        "spend_limit_period": {
+          "type": ["null", "string"]
+        },
+        "template_id": {
+          "type": ["null", "integer"]
+        },
+        "version_id": {
+          "type": ["null", "integer"]
+        }
+      }
+    },
+    "uri": {
+      "type": ["null", "string"]
+    }
+  }
+}

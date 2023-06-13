@@ -11,28 +11,10 @@
             "additionalProperties": false,
             "properties": {
               "id": {
-                "type": ["null", "integer"]
+                "type": ["null", "string"]
               },
               "name": {
                 "type": ["null", "string"]
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "account": {
-              "type": ["null", "object"],
-              "additionalProperties": false,
-              "properties": {
-                "id": {
-                  "type": ["null", "integer"]
-                },
-                "name": {
-                  "type": ["null", "string"]
-                }
               }
             }
           }
@@ -50,6 +32,9 @@
     },
     "cellphone_number_country": {
       "type": ["null", "string"]
+    },
+    "editable": {
+      "type": ["null", "boolean"]
     },
     "email_address": {
       "type": ["null", "string"]

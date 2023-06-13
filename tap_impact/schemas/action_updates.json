@@ -24,12 +24,33 @@
     "campaign_id": {
       "type": ["null", "integer"]
     },
+    "catalog_category": {
+      "type": ["null", "string"]
+    },
+    "catalog_description": {
+      "type": ["null", "string"]
+    },
+    "catalog_manufacturer": {
+      "type": ["null", "string"]
+    },
+    "catalog_name": {
+      "type": ["null", "string"]
+    },
+    "catalog_original_format_category": {
+      "type": ["null", "string"]
+    },
+    "catalog_subcategory": {
+      "type": ["null", "string"]
+    },
     "category": {
       "type": ["null", "string"]
     },
     "clearing_date": {
       "type": ["null", "string"],
       "format": "date-time"
+    },
+    "contract_id": {
+      "type": ["null", "string"]
     },
     "currency": {
       "type": ["null", "string"]
@@ -38,6 +59,13 @@
       "type": ["null", "string"]
     },
     "customer_status": {
+      "type": ["null", "string"]
+    },
+    "default_payout": {
+      "type": ["null", "number"],
+      "multipleOf": 1e-8
+    },
+    "default_payout_currency": {
       "type": ["null", "string"]
     },
     "delta_amount": {
@@ -49,6 +77,12 @@
       "multipleOf": 1e-8
     },
     "disposition": {
+      "type": ["null", "string"]
+    },
+    "event_type_id": {
+      "type": ["null", "string"]
+    },
+    "event_type_name": {
       "type": ["null", "string"]
     },
     "id": {
@@ -64,8 +98,11 @@
     "order_id": {
       "type": ["null", "string"]
     },
+    "payout_level": {
+      "type": ["null", "string"]
+    },
     "quantity": {
-      "type": ["null", "integer"]
+      "type": ["null", "string"]
     },
     "shared_id": {
       "type": ["null", "string"]
