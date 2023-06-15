@@ -1,5 +1,6 @@
 import re
 import singer
+from datetime import datetime
 
 LOGGER = singer.get_logger()
 
@@ -34,6 +35,12 @@ def convert_json(this_json):
         else:
             out[new_key] = this_json[key]
     return out
+
+# Add a field to each record to keep track of the extraction date
+def add_extraction_date(records):
+    for record in records:
+        record["extraction_time"] = datetime.utcnow().isoformat()
+    return records
 
 
 # Replace system/reserved field 'oid' with 'order_id'
@@ -95,4 +102,6 @@ def transform_json(this_json, stream_name, data_key):
         transformed_json = transform_conversion_paths(converted_json, converted_data_key)[converted_data_key]
     else:
         transformed_json = converted_json[converted_data_key]
-    return transformed_json
+    
+    records_with_timestamp = add_extraction_date(transformed_json)
+    return records_with_timestamp

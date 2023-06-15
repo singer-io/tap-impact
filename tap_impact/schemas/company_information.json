@@ -184,6 +184,10 @@
     },
     "website": {
       "type": ["null", "string"]
+    },
+    "extraction_time": {
+      "type": ["null", "string"],
+      "format": "date-time"
     }
   }
 }

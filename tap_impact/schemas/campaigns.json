@@ -231,6 +231,10 @@
     },
     "view_through_crediting": {
       "type": ["null", "boolean"]
+    },
+    "extraction_time": {
+      "type": ["null", "string"],
+      "format": "date-time"
     }
   }
 }
