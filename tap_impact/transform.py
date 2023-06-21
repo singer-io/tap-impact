@@ -39,7 +39,7 @@ def convert_json(this_json):
 # Add a field to each record to keep track of the extraction date
 def add_extraction_date(records):
     for record in records:
-        record["extraction_time"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        record["extraction_date"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     return records
 
 
