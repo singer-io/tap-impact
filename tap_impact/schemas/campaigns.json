@@ -232,7 +232,7 @@
     "view_through_crediting": {
       "type": ["null", "boolean"]
     },
-    "extraction_time": {
+    "extraction_date": {
       "type": ["null", "string"],
       "format": "date-time"
     }

@@ -121,6 +121,10 @@
     },
     "unique_click": {
       "type": ["null", "boolean"]
+    },
+    "extraction_date": {
+      "type": ["null", "string"],
+      "format": "date-time"
     }
   }
 }
