@@ -5,8 +5,6 @@ from datetime import datetime
 LOGGER = singer.get_logger()
 
 # Convert camelCase to snake_case
-
-
 def convert(name):
     regsub = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', regsub).lower()
@@ -41,7 +39,7 @@ def convert_json(this_json):
 # Add a field to each record to keep track of the extraction date
 def add_extraction_date(records):
     for record in records:
-        record["extraction_date"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        record["extraction_time"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     return records
 
 
@@ -88,8 +86,7 @@ def transform_conversion_paths(this_json, data_key):
         this_json[data_key][i]['referral_counts'] = []
         for referral_count in referral_counts_list:
             if isinstance(referral_count, dict):
-                this_json[data_key][i]['referral_counts'].append(
-                    referral_count)
+                this_json[data_key][i]['referral_counts'].append(referral_count)
 
         i = i + 1
     return this_json
@@ -100,13 +97,11 @@ def transform_json(this_json, stream_name, data_key):
     converted_json = convert_json(this_json)
     converted_data_key = convert(data_key)
     if stream_name in ('actions', 'action_updates'):
-        transformed_json = replace_order_id(converted_json, converted_data_key)[
-            converted_data_key]
+        transformed_json = replace_order_id(converted_json, converted_data_key)[converted_data_key]
     if stream_name in ['conversion_paths']:
-        transformed_json = transform_conversion_paths(
-            converted_json, converted_data_key)[converted_data_key]
+        transformed_json = transform_conversion_paths(converted_json, converted_data_key)[converted_data_key]
     else:
         transformed_json = converted_json[converted_data_key]
-
+    
     records_with_timestamp = add_extraction_date(transformed_json)
     return records_with_timestamp
