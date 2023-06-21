@@ -38,6 +38,10 @@
     },
     "uri": {
       "type": ["null", "string"]
+    },
+    "extraction_date": {
+      "type": ["null", "string"],
+      "format": "date-time"
     }
   }
 }

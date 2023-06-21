@@ -324,6 +324,10 @@
           "type": "null"
         }
       ]
+    },
+    "extraction_date": {
+      "type": ["null", "string"],
+      "format": "date-time"
     }
   }
 }
