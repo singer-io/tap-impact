@@ -1,0 +1,40 @@
+name: Add issue to Marketing Integrations Project
+
+on:
+  issues:
+    types:
+      - opened
+
+env:
+  PROJECT_ID: 4742
+
+jobs:
+  add-to-project:
+    name: Add issue to Marketing Integrations Project
+    runs-on: shopify-ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@main
+        id: add_to_project
+        with:
+          project-url: "https://github.com/orgs/Shopify/projects/${{ env.PROJECT_ID }}"
+          github-token: ${{ secrets.SHOPIFY_GH_ACCESS_TOKEN }}
+          labeled: action-item, security, sev-1, sev-2, sev-3, sev-4, sev5
+          label-operator: NOT
+
+  add-to-project-with-issue-type:
+    name: Add Tech-Debt issue to Marketing Integrations Project
+    runs-on: shopify-ubuntu-latest
+    steps:
+      - uses: actions/add-to-project@main
+        id: add_to_project
+        with:
+          project-url: "https://github.com/orgs/Shopify/projects/${{ env.PROJECT_ID }}"
+          github-token: ${{ secrets.SHOPIFY_GH_ACCESS_TOKEN }}
+          labeled: action-item, security, sev-1, sev-2, sev-3, sev-4, sev5
+      - uses: Shopify/github-actions/update-project-item-fields-action@v1
+        if: steps.add_to_project.outputs.itemId != null
+        with:
+          github-token: ${{ secrets.SHOPIFY_GH_ACCESS_TOKEN }}
+          project-number: ${{ env.PROJECT_ID }}
+          project-item-id: ${{ steps.add_to_project.outputs.itemId }}
+          fields: "{\"Issue Type\": \"Tech Debt\"}"
