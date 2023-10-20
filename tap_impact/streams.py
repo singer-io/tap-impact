@@ -42,7 +42,7 @@ STREAMS = {
                 },
                 'key_properties': ['id'],
                 'replication_method': 'INCREMENTAL',
-                'replication_keys': ['event_date'],
+                'replication_keys': ['locking_date'],
                 'bookmark_type': 'datetime'
             },
             'action_inquiries': {
@@ -66,7 +66,7 @@ STREAMS = {
                 },
                 'key_properties': ['id'],
                 'replication_method': 'INCREMENTAL',
-                'replication_keys': ['update_date'],
+                'replication_keys': ['locking_date'],
                 'bookmark_type': 'datetime'
             },
             'clicks': {
