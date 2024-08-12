@@ -39,7 +39,7 @@ STREAMS = {
                 'params': {
                     'CampaignId': '<parent_id>',
                     'ActionDateStart': '<last_datetime>',
-                    'ActionDateEnd': '<time_extracted>',
+                    'ActionDateEnd': '<current_datetime>',
                 },
                 'key_properties': ['id'],
                 'replication_method': 'INCREMENTAL',
@@ -52,7 +52,7 @@ STREAMS = {
                 'params': {
                     'CampaignId': '<parent_id>',
                     'StartDate': '<last_datetime>',
-                    'EndDate': '<time_extracted>'
+                    'EndDate': '<current_datetime>'
                 },
                 'key_properties': ['id'],
                 'replication_method': 'INCREMENTAL',
@@ -65,7 +65,7 @@ STREAMS = {
                 'params': {
                     'CampaignId': '<parent_id>',
                     'StartDate': '<last_datetime>',
-                    'EndDate': '<time_extracted>'
+                    'EndDate': '<current_datetime>'
                 },
                 'key_properties': ['id'],
                 'replication_method': 'INCREMENTAL',

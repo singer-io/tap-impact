@@ -196,7 +196,7 @@ def sync_endpoint(client,
                     param_string
                     .replace('<parent_id>', str(parent_id))
                     .replace('<last_datetime>', strptime_to_utc(last_datetime).strftime('%Y-%m-%dT%H:%M:%SZ'))
-                    .replace('<time_extracted>', strptime_to_utc(end_dt_str).strftime('%Y-%m-%dT%H:%M:%SZ'))
+                    .replace('<current_datetime>', strptime_to_utc(end_dt_str).strftime('%Y-%m-%dT%H:%M:%SZ'))
                 )
                 # querystring = param_string.replace('<parent_id>', str(parent_id)).replace('<last_datetime>', strptime_to_utc(last_datetime).strftime('%Y-%m-%dT%H:%M:%SZ')).replace('<current_datetime>', strptime_to_utc(end_date).strftime('%Y-%m-%dT%H:%M:%SZ'))
             else:
