@@ -152,6 +152,7 @@ def sync_endpoint(client,
 
     end_dttm = utils.now()
     end_dt = end_dttm.date()
+    end_dt_str = end_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
     start_dttm = end_dttm
     start_dt = end_dt
 
@@ -190,8 +191,12 @@ def sync_endpoint(client,
 
             if page == 1 and not params == {}:
                 param_string = '&'.join(['%s=%s' % (key, value) for (key, value) in params.items()])
-                querystring = param_string.replace('<parent_id>', str(parent_id)).replace(
-                    '<last_datetime>', strptime_to_utc(last_datetime).strftime('%Y-%m-%dT%H:%M:%SZ'))
+                querystring = (
+                    param_string
+                    .replace('<parent_id>', str(parent_id))
+                    .replace('<last_datetime>', strptime_to_utc(last_datetime).strftime('%Y-%m-%dT%H:%M:%SZ'))
+                    .replace('<current_datetime>', strptime_to_utc(end_dt_str).strftime('%Y-%m-%dT%H:%M:%SZ'))
+                )
             else:
                 querystring = None
             LOGGER.info('URL for Stream {}: {}{}'.format(
