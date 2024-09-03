@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.2
+  * Adds end date in params for Actions and related streams [#31](https://github.com/singer-io/tap-impact/pull/31)
+
 ## 2.0.1
   * Dependabot update [#25](https://github.com/singer-io/tap-impact/pull/25)
 
