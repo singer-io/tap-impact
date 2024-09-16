@@ -128,7 +128,6 @@ def sync_endpoint(client,
                   path,
                   endpoint_config,
                   static_params,
-                  bookmark_query_field=None,
                   bookmark_field=None,
                   bookmark_type=None,
                   data_key=None,
@@ -162,218 +161,200 @@ def sync_endpoint(client,
             last_datetime = default_date_str
         max_bookmark_value = last_datetime
 
-    if bookmark_query_field:
-        if bookmark_type == 'datetime':
-            start_dttm = strptime_to_utc(last_datetime)
-            start_dt = start_dttm.date()
-            start_dt_str = strftime(start_dttm)[0:10]
-    # date_list provides one date for each date in range
-    # Most endpoints, witout a bookmark query field, will have a single date (today)
-    # Clicks endpoint will have a date for each day from bookmark to today
-    date_list = [str(start_dt + timedelta(days=x)) for x in range((end_dt - start_dt).days + 1)]
+
     endpoint_total = 0
     total_records = 0
     limit = 1000 # PageSize (default for API is 100)
-    for bookmark_date in date_list:
-        page = 1
-        offset = 0
-        total_records = 0
-        if stream_name == 'clicks':
-            LOGGER.info('Stream: {}, Syncing bookmark_date = {}'.format(
-                stream_name, bookmark_date))
-        next_url = '{}/{}.json'.format(client.base_url, path)
-        while next_url:
-            # Squash params to query-string params
-            params = {
-                "PageSize": limit,
-                **static_params # adds in endpoint specific, sort, filter params
-            }
+    # for bookmark_date in date_list:
+    page = 1
+    offset = 0
+    total_records = 0
 
-            if bookmark_query_field:
-                if bookmark_type == 'datetime':
-                    params[bookmark_query_field] = bookmark_date
-                elif bookmark_type == 'integer':
-                    params[bookmark_query_field] = last_integer
+    next_url = '{}/{}.json'.format(client.base_url, path)
+    while next_url:
+        # Squash params to query-string params
+        params = {
+            "PageSize": limit,
+            **static_params # adds in endpoint specific, sort, filter params
+        }
 
-            if page == 1 and not params == {}:
-                param_string = '&'.join(['%s=%s' % (key, value) for (key, value) in params.items()])
-                querystring = (
-                    param_string
-                    .replace('<parent_id>', str(parent_id))
-                    .replace('<last_datetime>', strptime_to_utc(last_datetime).strftime('%Y-%m-%dT%H:%M:%SZ'))
-                    .replace('<current_datetime>', strptime_to_utc(end_dt_str).strftime('%Y-%m-%dT%H:%M:%SZ'))
-                )
-            else:
-                querystring = None
-            LOGGER.info('URL for Stream {}: {}{}'.format(
-                stream_name,
-                next_url,
-                '?{}'.format(querystring) if querystring else ''))
+        if page == 1 and not params == {}:
+            param_string = '&'.join(['%s=%s' % (key, value) for (key, value) in params.items()])
+            querystring = (
+                param_string
+                .replace('<parent_id>', str(parent_id))
+                .replace('<last_datetime>', strptime_to_utc(last_datetime).strftime('%Y-%m-%dT%H:%M:%SZ'))
+                .replace('<current_datetime>', strptime_to_utc(end_dt_str).strftime('%Y-%m-%dT%H:%M:%SZ'))
+            )
+        else:
+            querystring = None
+        LOGGER.info('URL for Stream {}: {}{}'.format(
+            stream_name,
+            next_url,
+            '?{}'.format(querystring) if querystring else ''))
 
-            # API request data
-            data = {}
-            data = client.get(
-                url=next_url,
-                path=path,
-                params=querystring,
-                endpoint=stream_name)
+        # API request data
+        data = {}
+        data = client.get(
+            url=next_url,
+            path=path,
+            params=querystring,
+            endpoint=stream_name)
 
-            # time_extracted: datetime when the data was extracted from the API
-            time_extracted = utils.now()
-            if not data or data is None or data == {}:
-                total_records = 0
-                break # No data results
+        # time_extracted: datetime when the data was extracted from the API
+        time_extracted = utils.now()
+        if not data or data is None or data == {}:
+            total_records = 0
+            break # No data results
 
-            # Get pagination details
-            api_total = int(data.get('@total', '0'))
-            page_size = int(data.get('@pagesize', '0'))
-            if page_size:
-                if page_size > limit:
-                    limit = page_size
-            next_page_uri = data.get('@nextpageuri', None)
-            if next_page_uri:
-                next_url = '{}{}'.format(BASE_URL, next_page_uri)
-            else:
-                next_url = None
+        # Get pagination details
+        api_total = int(data.get('@total', '0'))
+        page_size = int(data.get('@pagesize', '0'))
+        if page_size:
+            if page_size > limit:
+                limit = page_size
+        next_page_uri = data.get('@nextpageuri', None)
+        if next_page_uri:
+            next_url = '{}{}'.format(BASE_URL, next_page_uri)
+        else:
+            next_url = None
 
-            # Break out of loop if only paginations details data (no records)
-            #   or no data_key in data
-            #  company_information and report_metadata do not have pagination details
-            if not stream_name in ('company_information', 'report_metadata'):
-                # catalog_items has bug where api_total is always 0
-                if (not stream_name == 'catalog_items') and (api_total == 0) and (not next_url):
-                    break
-                if not data_key in data:
-                    break
+        # Break out of loop if only paginations details data (no records)
+        #   or no data_key in data
+        #  company_information and report_metadata do not have pagination details
+        if not stream_name in ('company_information', 'report_metadata'):
+            # catalog_items has bug where api_total is always 0
+            if (not stream_name == 'catalog_items') and (api_total == 0) and (not next_url):
+                break
+            if not data_key in data:
+                break
 
-            # Transform data with transform_json from transform.py
-            # The data_key identifies the array/list of records below the <root> element
-            # LOGGER.info('data = {}'.format(data)) # TESTING, comment out
-            transformed_data = [] # initialize the record list
-            data_list = []
-            data_dict = {}
-            if isinstance(data, list) and not data_key in data:
-                data_list = data
-                data_dict[data_key] = data_list
-                transformed_data = transform_json(data_dict, stream_name, data_key)
-            elif isinstance(data, dict) and not data_key in data:
-                data_list.append(data)
-                data_dict[data_key] = data_list
-                transformed_data = transform_json(data_dict, stream_name, data_key)
-            else:
-                transformed_data = transform_json(data, stream_name, data_key)
+        # Transform data with transform_json from transform.py
+        # The data_key identifies the array/list of records below the <root> element
+        # LOGGER.info('data = {}'.format(data)) # TESTING, comment out
+        transformed_data = [] # initialize the record list
+        data_list = []
+        data_dict = {}
+        if isinstance(data, list) and not data_key in data:
+            data_list = data
+            data_dict[data_key] = data_list
+            transformed_data = transform_json(data_dict, stream_name, data_key)
+        elif isinstance(data, dict) and not data_key in data:
+            data_list.append(data)
+            data_dict[data_key] = data_list
+            transformed_data = transform_json(data_dict, stream_name, data_key)
+        else:
+            transformed_data = transform_json(data, stream_name, data_key)
 
-            # LOGGER.info('transformed_data = {}'.format(transformed_data)) # TESTING, comment out
-            if not transformed_data or transformed_data is None:
-                LOGGER.info('No transformed data for data = {}'.format(data))
-                total_records = 0
-                break # No data results
+        # LOGGER.info('transformed_data = {}'.format(transformed_data)) # TESTING, comment out
+        if not transformed_data or transformed_data is None:
+            LOGGER.info('No transformed data for data = {}'.format(data))
+            total_records = 0
+            break # No data results
 
-            # Verify key id_fields are present
-            for record in transformed_data:
-                for key in id_fields:
-                    if not record.get(key):
-                        LOGGER.info('Stream: {}, Missing key {} in record: {}'.format(
-                            stream_name, key, record))
-                        raise RuntimeError
+        # Verify key id_fields are present
+        for record in transformed_data:
+            for key in id_fields:
+                if not record.get(key):
+                    LOGGER.info('Stream: {}, Missing key {} in record: {}'.format(
+                        stream_name, key, record))
+                    raise RuntimeError
 
-            # Process records and get the max_bookmark_value and record_count for the set of records
-            max_bookmark_value, record_count = process_records(
-                catalog=catalog,
-                stream_name=stream_name,
-                records=transformed_data,
-                time_extracted=time_extracted,
-                bookmark_field=bookmark_field,
-                bookmark_type=bookmark_type,
-                max_bookmark_value=max_bookmark_value,
-                last_datetime=last_datetime,
-                last_integer=last_integer,
-                parent=parent,
-                parent_id=parent_id)
-            LOGGER.info('Stream {}, batch processed {} records'.format(
-                stream_name, record_count))
+        # Process records and get the max_bookmark_value and record_count for the set of records
+        max_bookmark_value, record_count = process_records(
+            catalog=catalog,
+            stream_name=stream_name,
+            records=transformed_data,
+            time_extracted=time_extracted,
+            bookmark_field=bookmark_field,
+            bookmark_type=bookmark_type,
+            max_bookmark_value=max_bookmark_value,
+            last_datetime=last_datetime,
+            last_integer=last_integer,
+            parent=parent,
+            parent_id=parent_id)
+        LOGGER.info('Stream {}, batch processed {} records'.format(
+            stream_name, record_count))
 
-            # Loop thru parent batch records for each children objects (if should stream)
-            children = endpoint_config.get('children')
-            if children:
-                for child_stream_name, child_endpoint_config in children.items():
-                    if child_stream_name in selected_streams:
-                        model_id = config.get('model_id') or ''
-                        process_child = True
-                        # conversion_paths endpoint requires model_id tap config param
-                        if child_stream_name == 'conversion_paths' and not model_id:
-                            process_child = False
-                        if process_child:
-                            write_schema(catalog, child_stream_name)
-                            # For each parent record
-                            for record in transformed_data:
-                                i = 0
-                                # Set parent_id
-                                for id_field in id_fields:
-                                    if i == 0:
-                                        parent_id_field = id_field
-                                    if id_field == 'id':
-                                        parent_id_field = id_field
-                                    i = i + 1
-                                parent_id = record.get(parent_id_field)
+        # Loop thru parent batch records for each children objects (if should stream)
+        children = endpoint_config.get('children')
+        if children:
+            for child_stream_name, child_endpoint_config in children.items():
+                if child_stream_name in selected_streams:
+                    model_id = config.get('model_id') or ''
+                    process_child = True
+                    # conversion_paths endpoint requires model_id tap config param
+                    if child_stream_name == 'conversion_paths' and not model_id:
+                        process_child = False
+                    if process_child:
+                        write_schema(catalog, child_stream_name)
+                        # For each parent record
+                        for record in transformed_data:
+                            i = 0
+                            # Set parent_id
+                            for id_field in id_fields:
+                                if i == 0:
+                                    parent_id_field = id_field
+                                if id_field == 'id':
+                                    parent_id_field = id_field
+                                i = i + 1
+                            parent_id = record.get(parent_id_field)
 
-                                # sync_endpoint for child
-                                LOGGER.info(
-                                    'START Sync for Stream: {}, parent_stream: {}, parent_id: {}'\
-                                        .format(child_stream_name, stream_name, parent_id))
-                                child_path = child_endpoint_config.get(
-                                    'path', child_stream_name).format(str(parent_id)).replace(
-                                        '<model_id>', model_id)
-                                child_bookmark_field = next(iter(child_endpoint_config.get(
-                                    'replication_keys', [])), None)
-                                child_total_records = sync_endpoint(
-                                    client=client,
-                                    catalog=catalog,
-                                    state=state,
-                                    config=config,
-                                    start_date=start_date,
-                                    stream_name=child_stream_name,
-                                    path=child_path,
-                                    endpoint_config=child_endpoint_config,
-                                    static_params=child_endpoint_config.get('params', {}),
-                                    bookmark_query_field=child_endpoint_config.get(
-                                        'bookmark_query_field'),
-                                    bookmark_field=child_bookmark_field,
-                                    bookmark_type=child_endpoint_config.get('bookmark_type'),
-                                    data_key=child_endpoint_config.get('data_key', 'results'),
-                                    id_fields=child_endpoint_config.get('key_properties'),
-                                    selected_streams=selected_streams,
-                                    parent=child_endpoint_config.get('parent'),
-                                    parent_id=parent_id)
-                                LOGGER.info(
-                                    'FINISHED Sync for Stream: {}, parent_id: {}, total_records: {}'\
-                                        .format(child_stream_name, parent_id, child_total_records))
+                            # sync_endpoint for child
+                            LOGGER.info(
+                                'START Sync for Stream: {}, parent_stream: {}, parent_id: {}'\
+                                    .format(child_stream_name, stream_name, parent_id))
+                            child_path = child_endpoint_config.get(
+                                'path', child_stream_name).format(str(parent_id)).replace(
+                                    '<model_id>', model_id)
+                            child_bookmark_field = next(iter(child_endpoint_config.get(
+                                'replication_keys', [])), None)
+                            child_total_records = sync_endpoint(
+                                client=client,
+                                catalog=catalog,
+                                state=state,
+                                config=config,
+                                start_date=start_date,
+                                stream_name=child_stream_name,
+                                path=child_path,
+                                endpoint_config=child_endpoint_config,
+                                static_params=child_endpoint_config.get('params', {}),
+                                bookmark_field=child_bookmark_field,
+                                bookmark_type=child_endpoint_config.get('bookmark_type'),
+                                data_key=child_endpoint_config.get('data_key', 'results'),
+                                id_fields=child_endpoint_config.get('key_properties'),
+                                selected_streams=selected_streams,
+                                parent=child_endpoint_config.get('parent'),
+                                parent_id=parent_id)
+                            LOGGER.info(
+                                'FINISHED Sync for Stream: {}, parent_id: {}, total_records: {}'\
+                                    .format(child_stream_name, parent_id, child_total_records))
 
-            # Update the state with the max_bookmark_value for the stream
-            if bookmark_field:
-                write_bookmark(state, stream_name, max_bookmark_value)
+        # Update the state with the max_bookmark_value for the stream
+        if bookmark_field:
+            write_bookmark(state, stream_name, max_bookmark_value)
 
-            # Adjust total_records w/ record_count, if needed
-            if record_count > total_records:
-                total_records = total_records + record_count
-            else:
-                total_records = api_total
+        # Adjust total_records w/ record_count, if needed
+        if record_count > total_records:
+            total_records = total_records + record_count
+        else:
+            total_records = api_total
 
-            # to_rec: to record; ending record for the batch page
-            to_rec = offset + limit
-            if to_rec > total_records:
-                to_rec = total_records
+        # to_rec: to record; ending record for the batch page
+        to_rec = offset + limit
+        if to_rec > total_records:
+            to_rec = total_records
 
-            LOGGER.info('Synced Stream: {}, page: {}, {} to {} of total records: {}'.format(
-                stream_name,
-                page,
-                offset,
-                to_rec,
-                total_records))
-            # Pagination: increment the offset by the limit (batch-size) and page
-            offset = offset + limit
-            page = page + 1
-        endpoint_total = endpoint_total + total_records
+        LOGGER.info('Synced Stream: {}, page: {}, {} to {} of total records: {}'.format(
+            stream_name,
+            page,
+            offset,
+            to_rec,
+            total_records))
+        # Pagination: increment the offset by the limit (batch-size) and page
+        offset = offset + limit
+        page = page + 1
+    endpoint_total = endpoint_total + total_records
     # Return total_records (for all pages)
     return endpoint_total
 
@@ -424,7 +405,6 @@ def sync(client, config, catalog, state):
                 path=path,
                 endpoint_config=endpoint_config,
                 static_params=endpoint_config.get('params', {}),
-                bookmark_query_field=endpoint_config.get('bookmark_query_field'),
                 bookmark_field=bookmark_field,
                 bookmark_type=endpoint_config.get('bookmark_type'),
                 data_key=endpoint_config.get('data_key', 'results'),

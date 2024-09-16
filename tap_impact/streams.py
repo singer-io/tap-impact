@@ -8,7 +8,6 @@
 #        and setting the state
 #   params: Query, sort, and other endpoint specific parameters
 #   data_key: JSON element containing the records for the endpoint
-#   bookmark_query_field: Typically a date-time field used for filtering the query
 #   bookmark_type: Data type for bookmark, integer or datetime
 #   children: A collection of child endpoints (where the endpoint path includes the parent id)
 #   parent: On each of the children, the singular stream name for parent element
@@ -71,15 +70,6 @@ STREAMS = {
                 'replication_method': 'INCREMENTAL',
                 'replication_keys': ['update_date'],
                 'bookmark_type': 'datetime'
-            },
-            'clicks': {
-                'path': 'Campaigns/{}/Clicks',
-                'data_key': 'Clicks',
-                'key_properties': ['id'],
-                'replication_method': 'INCREMENTAL',
-                'replication_keys': ['event_date'],
-                'bookmark_type': 'datetime',
-                'bookmark_query_field': 'Date'
             },
             'contacts': {
                 'path': 'Campaigns/{}/Contacts',
