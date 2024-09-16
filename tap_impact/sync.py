@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 import json
 import singer
 from singer import metrics, metadata, Transformer, utils
@@ -143,18 +143,24 @@ def sync_endpoint(client,
     last_integer = None
     max_bookmark_value = None
 
-    if bookmark_type == 'integer':
-        last_integer = get_bookmark(state, stream_name, 0)
-        max_bookmark_value = last_integer
-    else:
-        last_datetime = get_bookmark(state, stream_name, start_date)
-        max_bookmark_value = last_datetime
-
     end_dttm = utils.now()
     end_dt = end_dttm.date()
     end_dt_str = end_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
     start_dttm = end_dttm
     start_dt = end_dt
+
+    if bookmark_type == 'integer':
+        last_integer = get_bookmark(state, stream_name, 0)
+        max_bookmark_value = last_integer
+    else:
+        last_datetime = get_bookmark(state, stream_name, start_date)
+        last_datetime_dt = datetime.fromisoformat(last_datetime.replace('Z', '+00:00'))
+        default_date = end_dttm - timedelta(days=3*365)
+        default_date_str = default_date.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+        if stream_name in ('actions', 'action_updates') and last_datetime_dt < default_date:
+            last_datetime = default_date_str
+        max_bookmark_value = last_datetime
 
     if bookmark_query_field:
         if bookmark_type == 'datetime':
