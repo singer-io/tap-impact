@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 import json
 import singer
 from singer import metrics, metadata, Transformer, utils
-from singer.utils import strptime_to_utc, strftime
+from singer.utils import strptime_to_utc
 from tap_impact.transform import transform_json
 from tap_impact.streams import STREAMS
 
@@ -145,8 +145,6 @@ def sync_endpoint(client,
     end_dttm = utils.now()
     end_dt = end_dttm.date()
     end_dt_str = end_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
-    start_dttm = end_dttm
-    start_dt = end_dt
 
     if bookmark_type == 'integer':
         last_integer = get_bookmark(state, stream_name, 0)
