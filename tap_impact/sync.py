@@ -8,7 +8,7 @@ from tap_impact.streams import STREAMS
 
 LOGGER = singer.get_logger()
 BASE_URL = 'https://api.impact.com'
-# window size implemented for actions and actionUpdates streams
+# Window size implemented for actions and actionUpdates streams
 # as startDate and EndDate can just be 45 days apart
 DEFAULT_WINDOW_SIZE = 45
 
@@ -181,7 +181,7 @@ def sync_endpoint(client,
     endpoint_total = 0
     total_records = 0
     limit = 1000 # PageSize (default for API is 100)
-    # for bookmark_date in date_list:
+
     for start_date_from_ranges, end_date_from_ranges in date_ranges:
         # Convert dates to strings for API request
         start_date_str = start_date_from_ranges.strftime('%Y-%m-%dT%H:%M:%SZ')
