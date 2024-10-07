@@ -177,7 +177,7 @@ def sync_endpoint(client,
         if isinstance(max_bookmark_value, str):
             start_dt = datetime.fromisoformat(max_bookmark_value.replace('Z', '+00:00')).date()
         date_ranges = split_date_range(start_dt, end_dt) if stream_name in ('actions', 'action_updates') else [(start_dt, end_dt)]
-        LOGGER.info("date_ranges:.....:%s",date_ranges)
+
     endpoint_total = 0
     total_records = 0
     limit = 1000 # PageSize (default for API is 100)
