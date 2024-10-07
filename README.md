@@ -17,7 +17,6 @@ This tap:
     - [Actions](https://developer.impact.com/default#operations-Actions-GetActions)
     - [Action Inquiries](https://developer.impact.com/default#operations-Action_Inquiries-GetActionInquiries)
     - [Action Updates](https://integrations.impact.com/impact-brand/reference/list-all-action-updates)
-    - [Clicks](https://developer.impact.com/default#operations-Clicks-GetClicks)
     - [Contacts](https://developer.impact.com/default#operations-Contacts-GetContacts)
     - [Conversion Paths](https://developer.impact.com/default/documentation/Rest-Adv-v8#operations-Conversion_Paths-GetConversionPaths)
     - [Notes](https://developer.impact.com/default#operations-Notes-GetNotes)
@@ -98,7 +97,7 @@ This tap:
 - Foreign key fields: none
 - Replication strategy: FULL_TABLE
 - Transformations: camelCase to snake_case
-- Children: actions, action_inquiries, action_updates, clicks, contacts, notes, media_partner_groups
+- Children: actions, action_inquiries, action_updates, contacts, notes, media_partner_groups
 
 [catalogs](https://developer.impact.com/default#operations-Catalogs-ListCatalogs)
 - Endpoint: https://api.impact.com/{api_catalog}/{account_sid}/Catalogs
@@ -115,17 +114,6 @@ This tap:
 - Replication strategy: FULL_TABLE (ALL for parent Catalog)
 - Transformations: camelCase to snake_case, add catalog_id (parent id)
 - Parent: catalogs
-
-[clicks](https://developer.impact.com/default#operations-Clicks-GetClicks)
-- Endpoint: https://api.impact.com/{api_catalog}/{account_sid}/Campaigns/{campaign_id}/Clicks
-- Primary key fields: id
-- Foreign key fields: ad_id, campaign_id, media_id, shared_id
-- Replication strategy: INCREMENTAL (Query filtered by Date for parent CampaignId)
-  - Filter: CampaignId (parent)
-  - Filter: Date (event_date)
-  - Bookmark: event_date
-- Transformations: camelCase to snake_case
-- Parent: campaigns
 
 [contacts](https://developer.impact.com/default#operations-Contacts-GetContacts)
 - Endpoint: https://api.impact.com/{api_catalog}/{account_sid}/Campaigns/{campaign_id}/Contacts
@@ -301,7 +289,6 @@ This tap:
             "actions": "2019-09-21T01:05:17.000000Z",
             "action_inquiries": "2019-09-14T14:34:03.000000Z",
             "action_updates": "2019-09-21T02:27:16.000000Z",
-            "clicks": "2019-09-21T00:54:26.000000Z",
             "api_submissions": "2019-09-21T00:47:35.000000Z",
             "ftp_submissions": "2019-09-20T00:42:39.000000Z",
             "invoices": "2019-09-03T10:02:01.000000Z"
@@ -380,7 +367,6 @@ This tap:
     | action_updates          | 1389    | 1       |
     | actions                 | 1075    | 1       |
     | action_inquiries        | 1       | 1       |
-    | clicks                  | 76213   | 1       |
     | contacts                | 383     | 1       |
     | exception_lists         | 0       | 1       |
     | promo_codes             | 20      | 1       |
