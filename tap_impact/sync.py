@@ -170,6 +170,7 @@ def sync_endpoint(client,
         default_date_str = default_date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
         if stream_name in ('actions', 'action_updates') and last_datetime_dt < default_date:
+            LOGGER.warning('Last datetime {} is older than 3 years, setting to default date {}'.format(last_datetime, default_date_str))
             last_datetime = default_date_str
 
         max_bookmark_value = last_datetime
