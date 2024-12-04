@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0
+  * Sets Default start_date to 3 Years Ago for actions and actionUpdates if it is older [#33](https://github.com/singer-io/tap-impact/pull/33)
+  * Removes implementation of clicks stream as it is deprecated [#34](https://github.com/singer-io/tap-impact/pull/34)
+  * Date window implementation for actions and actionUpdates [#35](https://github.com/singer-io/tap-impact/pull/35)
+
 ## 2.0.2
   * Adds end date in params for Actions and related streams [#31](https://github.com/singer-io/tap-impact/pull/31)
 
