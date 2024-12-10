@@ -63,9 +63,9 @@ class TestSplitDateRange(unittest.TestCase):
         """Test splitting a date range into smaller ranges."""
         actual_ranges = split_date_range(start_date, end_date)
 
-        # Compare the actual result with the expected result
-        self.assertEqual(actual_ranges, expected_ranges)
-
         # Compare the length of actual_ranges and expected_ranges
         self.assertEqual(len(actual_ranges), len(expected_ranges), f"Length mismatch for {name}. "
                                                                    f"Expected {len(expected_ranges)} but got {len(actual_ranges)}.")
+
+        # Compare the actual result with the expected result
+        self.assertEqual(actual_ranges, expected_ranges)
