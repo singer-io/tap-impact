@@ -166,11 +166,13 @@ def sync_endpoint(client,
     else:
         last_datetime = get_bookmark(state, stream_name, start_date)
         last_datetime_dt = datetime.fromisoformat(last_datetime.replace('Z', '+00:00'))
+        # Set default date for actions and action_updates streams to 3 years ago
+        # because defined start_date/bookmark date is older than 3 years
         default_date = end_dttm - timedelta(days=3*365)
         default_date_str = default_date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
         if stream_name in ('actions', 'action_updates') and last_datetime_dt < default_date:
-            LOGGER.warning('Last datetime {} is older than 3 years, setting to default date {}'.format(last_datetime, default_date_str))
+            LOGGER.warning('Last datetime {} is older than 3 years, setting to default date {} for actions and action_updates'.format(last_datetime, default_date_str))
             last_datetime = default_date_str
 
         max_bookmark_value = last_datetime
@@ -183,10 +185,10 @@ def sync_endpoint(client,
     total_records = 0
     limit = 1000 # PageSize (default for API is 100)
 
-    for start_date_from_ranges, end_date_from_ranges in date_ranges:
+    for start_date, end_date in date_ranges:
         # Convert dates to strings for API request
-        start_date_str = start_date_from_ranges.strftime('%Y-%m-%dT%H:%M:%SZ')
-        end_date_str = end_date_from_ranges.strftime('%Y-%m-%dT%H:%M:%SZ')
+        start_date_str = start_date.strftime('%Y-%m-%dT%H:%M:%SZ')
+        end_date_str = end_date.strftime('%Y-%m-%dT%H:%M:%SZ')
         page = 1
         offset = 0
         total_records = 0

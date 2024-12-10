@@ -22,12 +22,14 @@ jobs:
           command: |
             source /usr/local/share/virtualenvs/tap-tester/bin/activate
             stitch-validate-json tap_impact/schemas/*.json
-      # - run:
-      #     name: 'Unit Tests'
-      #     command: |
-      #       source ~/.virtualenvs/tap-impact/bin/activate
-      #       pip install nose
-      #       nosetests
+      - add_ssh_keys
+      - run:
+          name: 'Unit Tests'
+          command: |
+            source /usr/local/share/virtualenvs/tap-impact/bin/activate
+            pip install nose coverage
+            nosetests --with-coverage --cover-erase --cover-package=tap_impact --cover-html-dir=htmlcov tests/unittests
+            coverage html
       # - add_ssh_keys
       # TODO | https://stitchdata.atlassian.net/browse/SRCE-4593 (SRCE-4593 -> SRCE-4597)
       # - run:
