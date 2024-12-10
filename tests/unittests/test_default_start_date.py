@@ -1,39 +1,34 @@
 import unittest
-from unittest.mock import patch
 from datetime import datetime, timedelta
-
+from parameterized import parameterized
 from tap_impact.sync import get_bookmark
+from singer import utils
 
 class TestBookmarkDateHandling(unittest.TestCase):
 
-    @patch('tap_impact.sync.get_bookmark')
-    @patch('singer.utils.now')
-    def test_last_datetime_within_three_years(self, mock_now, mock_get_bookmark):
-        state = {}
-        stream_name = 'actions'
-        start_date = '2020-01-01T00:00:00Z'
-        end_dttm = datetime(2023, 1, 1, 0, 0, 0)
-        mock_now.return_value = end_dttm
+    @parameterized.expand([
+        # Test case 1: Start date within 3 years
+        ({}, 'actions', '2024-12-01T00:00:00Z', '2024-12-01T00:00:00Z'),
+        # Test case 2: Bookmark date within 3 years but start date is older
+        ({"bookmarks": {"actions": "2024-12-01T00:00:00Z"}}, 'actions', '2014-01-01T00:00:00Z', '2024-12-01T00:00:00Z'),
+        # Test case 3: Start date older than 3 years
+        ({}, 'actions', '2019-01-01T00:00:00Z', (utils.now() - timedelta(days=3 * 365)).strftime('%Y-%m-%dT%H:%M:%SZ')),
+        # Test case 4: Bookmark date older than 3 years but start date is older
+        ({"bookmarks": {"actions": "2020-01-01T00:00:00Z"}}, 'actions', '2019-01-01T00:00:00Z', (utils.now() - timedelta(days=3 * 365)).strftime('%Y-%m-%dT%H:%M:%SZ')),
+    ])
+    def test_bookmark_date(self, state, stream_name, start_date, expected_datetime):
+        """Test actions stream with various start dates and bookmark handling."""
 
-        # Simulate a bookmark returned from get_bookmark
-        mock_get_bookmark.return_value = '2022-01-01T00:00:00Z'
+        end_dttm = utils.now()
 
-        print("Mocked 'now' returned:", mock_now.return_value)
-        print("Mocked 'get_bookmark' returned:", mock_get_bookmark.return_value)
-
-        # the bookmark should not change if it's within 3 years
-        last_datetime = mock_get_bookmark(state, stream_name, start_date)
-        print("Last datetime:", last_datetime)
+        last_datetime = get_bookmark(state, stream_name, start_date)
 
         last_datetime_dt = datetime.fromisoformat(last_datetime.replace('Z', '+00:00'))
-        default_date = end_dttm - timedelta(days=3*365)
+        default_date = end_dttm - timedelta(days=3 * 365)
         default_date_str = default_date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
         if stream_name in ('actions', 'action_updates') and last_datetime_dt < default_date:
             last_datetime = default_date_str
 
-        max_bookmark_value = last_datetime
-
-        # Verify that the bookmark date is unchanged, as it is within 3 years
-        self.assertEqual(last_datetime, '2022-01-01T00:00:00Z')
-        self.assertEqual(max_bookmark_value, '2022-01-01T00:00:00Z')
+        # Perform the test assertion
+        self.assertEqual(last_datetime, expected_datetime)
