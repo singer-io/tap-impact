@@ -1,13 +1,16 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 import json
 import singer
 from singer import metrics, metadata, Transformer, utils
-from singer.utils import strptime_to_utc, strftime
+from singer.utils import strptime_to_utc
 from tap_impact.transform import transform_json
 from tap_impact.streams import STREAMS
 
 LOGGER = singer.get_logger()
 BASE_URL = 'https://api.impact.com'
+# Window size implemented for actions and actionUpdates streams
+# as startDate and EndDate can just be 45 days apart
+DEFAULT_WINDOW_SIZE = 45
 
 def write_schema(catalog, stream_name):
     stream = catalog.get_stream(stream_name)
@@ -118,6 +121,17 @@ def process_records(catalog, #pylint: disable=too-many-branches
         return max_bookmark_value, counter.value
 
 
+def split_date_range(start_date, end_date):
+    delta = timedelta(days=DEFAULT_WINDOW_SIZE)
+    current_start = start_date
+    ranges = []
+    while current_start < end_date:
+        current_end = min(current_start + delta, end_date)
+        ranges.append((current_start, current_end))
+        current_start = current_end
+    return ranges
+
+
 # Sync a specific parent or child endpoint.
 def sync_endpoint(client,
                   catalog,
@@ -128,7 +142,6 @@ def sync_endpoint(client,
                   path,
                   endpoint_config,
                   static_params,
-                  bookmark_query_field=None,
                   bookmark_field=None,
                   bookmark_type=None,
                   data_key=None,
@@ -143,38 +156,43 @@ def sync_endpoint(client,
     last_integer = None
     max_bookmark_value = None
 
+    end_dttm = utils.now()
+    end_dt = end_dttm.date()
+    start_dt = end_dt
+
     if bookmark_type == 'integer':
         last_integer = get_bookmark(state, stream_name, 0)
         max_bookmark_value = last_integer
     else:
         last_datetime = get_bookmark(state, stream_name, start_date)
+        last_datetime_dt = datetime.fromisoformat(last_datetime.replace('Z', '+00:00'))
+        # Set default_date for actions and action_updates streams to 3 years ago
+        # because defined start_date/bookmark date is older than 3 years
+        default_date = end_dttm - timedelta(days=3*365)
+        default_date_str = default_date.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+        if stream_name in ('actions', 'action_updates') and last_datetime_dt < default_date:
+            LOGGER.warning('Last datetime {} is older than 3 years, setting to default date {} for actions and action_updates'.format(last_datetime, default_date_str))
+            last_datetime = default_date_str
+
         max_bookmark_value = last_datetime
 
-    end_dttm = utils.now()
-    end_dt = end_dttm.date()
-    end_dt_str = end_dt.strftime('%Y-%m-%dT%H:%M:%SZ')
-    start_dttm = end_dttm
-    start_dt = end_dt
+        if isinstance(max_bookmark_value, str):
+            start_dt = datetime.fromisoformat(max_bookmark_value.replace('Z', '+00:00')).date()
+        date_ranges = split_date_range(start_dt, end_dt) if stream_name in ('actions', 'action_updates') else [(start_dt, end_dt)]
 
-    if bookmark_query_field:
-        if bookmark_type == 'datetime':
-            start_dttm = strptime_to_utc(last_datetime)
-            start_dt = start_dttm.date()
-            start_dt_str = strftime(start_dttm)[0:10]
-    # date_list provides one date for each date in range
-    # Most endpoints, witout a bookmark query field, will have a single date (today)
-    # Clicks endpoint will have a date for each day from bookmark to today
-    date_list = [str(start_dt + timedelta(days=x)) for x in range((end_dt - start_dt).days + 1)]
     endpoint_total = 0
     total_records = 0
     limit = 1000 # PageSize (default for API is 100)
-    for bookmark_date in date_list:
+
+    for range_start_date, range_end_date in date_ranges:
+        # Convert dates to strings for API request
+        start_date_str = range_start_date.strftime('%Y-%m-%dT%H:%M:%SZ')
+        end_date_str = range_end_date.strftime('%Y-%m-%dT%H:%M:%SZ')
         page = 1
         offset = 0
         total_records = 0
-        if stream_name == 'clicks':
-            LOGGER.info('Stream: {}, Syncing bookmark_date = {}'.format(
-                stream_name, bookmark_date))
+
         next_url = '{}/{}.json'.format(client.base_url, path)
         while next_url:
             # Squash params to query-string params
@@ -183,19 +201,13 @@ def sync_endpoint(client,
                 **static_params # adds in endpoint specific, sort, filter params
             }
 
-            if bookmark_query_field:
-                if bookmark_type == 'datetime':
-                    params[bookmark_query_field] = bookmark_date
-                elif bookmark_type == 'integer':
-                    params[bookmark_query_field] = last_integer
-
             if page == 1 and not params == {}:
                 param_string = '&'.join(['%s=%s' % (key, value) for (key, value) in params.items()])
                 querystring = (
                     param_string
                     .replace('<parent_id>', str(parent_id))
-                    .replace('<last_datetime>', strptime_to_utc(last_datetime).strftime('%Y-%m-%dT%H:%M:%SZ'))
-                    .replace('<current_datetime>', strptime_to_utc(end_dt_str).strftime('%Y-%m-%dT%H:%M:%SZ'))
+                    .replace('<last_datetime>', strptime_to_utc(start_date_str).strftime('%Y-%m-%dT%H:%M:%SZ'))
+                    .replace('<current_datetime>', strptime_to_utc(end_date_str).strftime('%Y-%m-%dT%H:%M:%SZ'))
                 )
             else:
                 querystring = None
@@ -330,8 +342,6 @@ def sync_endpoint(client,
                                     path=child_path,
                                     endpoint_config=child_endpoint_config,
                                     static_params=child_endpoint_config.get('params', {}),
-                                    bookmark_query_field=child_endpoint_config.get(
-                                        'bookmark_query_field'),
                                     bookmark_field=child_bookmark_field,
                                     bookmark_type=child_endpoint_config.get('bookmark_type'),
                                     data_key=child_endpoint_config.get('data_key', 'results'),
@@ -418,7 +428,6 @@ def sync(client, config, catalog, state):
                 path=path,
                 endpoint_config=endpoint_config,
                 static_params=endpoint_config.get('params', {}),
-                bookmark_query_field=endpoint_config.get('bookmark_query_field'),
                 bookmark_field=bookmark_field,
                 bookmark_type=endpoint_config.get('bookmark_type'),
                 data_key=endpoint_config.get('data_key', 'results'),
