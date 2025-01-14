@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.1
+  * Sets Default page_size to 20000 [#36](https://github.com/singer-io/tap-impact/pull/36)
+
 ## 2.1.0
   * Sets Default start_date to 3 Years Ago for actions and actionUpdates if it is older [#33](https://github.com/singer-io/tap-impact/pull/33)
   * Removes implementation of clicks stream as it is deprecated [#34](https://github.com/singer-io/tap-impact/pull/34)
