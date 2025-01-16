@@ -183,7 +183,7 @@ def sync_endpoint(client,
 
     endpoint_total = 0
     total_records = 0
-    limit = 1000 # PageSize (default for API is 100)
+    limit = 20000 # Default API PageSize
 
     for range_start_date, range_end_date in date_ranges:
         # Convert dates to strings for API request
