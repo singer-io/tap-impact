@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.2
+  * Bump dependency versions [#39](https://github.com/singer-io/tap-impact/pull/39)
+
 ## 2.1.1
   * Sets Default page_size to 20000 [#36](https://github.com/singer-io/tap-impact/pull/36)
 
