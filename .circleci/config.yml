@@ -28,7 +28,7 @@ jobs:
           command: |
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
             uv pip install pytest coverage parameterized
-            coverate run -m pytest tests/unittests
+            coverage run -m pytest tests/unittests
             coverage html
           when: always
       - store_test_results:
