@@ -2,16 +2,16 @@ version: 4
 jobs:
   build:
     docker:
-      - image: 218546966473.dkr.ecr.us-east-1.amazonaws.com/circle-ci:stitch-tap-tester
+      - image: 218546966473.dkr.ecr.us-east-1.amazonaws.com/circle-ci:stitch-tap-tester-uv
     steps:
       - checkout
       - run:
           name: 'Setup virtual env'
           command: |
-            python3 -m venv /usr/local/share/virtualenvs/tap-impact
+            uv venv --python 3.9 /usr/local/share/virtualenvs/tap-impact
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
-            pip install -U pip setuptools
-            pip install .[dev]
+            uv pip install -U pip setuptools
+            uv pip install .[dev]
       - run:
           name: 'pylint'
           command: |
@@ -27,9 +27,15 @@ jobs:
           name: 'Unit Tests'
           command: |
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
-            pip install nose coverage parameterized
-            nosetests --with-coverage --cover-erase --cover-package=tap_impact --cover-html-dir=htmlcov tests/unittests
+            uv pip install pytest coverage parameterized
+            coverate run -m pytest tests/unittests
             coverage html
+          when: always
+      - store_test_results:
+          path: test_output/report.xml
+      - store_artifacts:
+          path: htmlcov
+
       # - add_ssh_keys
       # TODO | https://stitchdata.atlassian.net/browse/SRCE-4593 (SRCE-4593 -> SRCE-4597)
       # - run:
