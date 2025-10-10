@@ -225,6 +225,7 @@ def flatten_streams():
                 flat_streams[child_stream_name] = {
                     'key_properties': child_enpoint_config.get('key_properties'),
                     'replication_method': child_enpoint_config.get('replication_method'),
-                    'replication_keys': child_enpoint_config.get('replication_keys')
+                    'replication_keys': child_enpoint_config.get('replication_keys'),
+                    'parent': child_enpoint_config.get('parent')
                 }
     return flat_streams
