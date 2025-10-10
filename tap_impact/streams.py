@@ -221,11 +221,11 @@ def flatten_streams():
         # Loop through children
         children = endpoint_config.get('children')
         if children:
-            for child_stream_name, child_enpoint_config in children.items():
+            for child_stream_name, child_endpoint_config in children.items():
                 flat_streams[child_stream_name] = {
-                    'key_properties': child_enpoint_config.get('key_properties'),
-                    'replication_method': child_enpoint_config.get('replication_method'),
-                    'replication_keys': child_enpoint_config.get('replication_keys'),
-                    'parent': child_enpoint_config.get('parent')
+                    'key_properties': child_endpoint_config.get('key_properties'),
+                    'replication_method': child_endpoint_config.get('replication_method'),
+                    'replication_keys': child_endpoint_config.get('replication_keys'),
+                    'parent': child_endpoint_config.get('parent')
                 }
     return flat_streams
