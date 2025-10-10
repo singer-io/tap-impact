@@ -31,6 +31,12 @@ def get_schemas():
             valid_replication_keys=stream_metadata.get('replication_keys', None),
             replication_method=stream_metadata.get('replication_method', None)
         )
+        # Check if the stream has any parent attribute
+        mdata = metadata.to_map(mdata)
+        parent_tap_stream_id = stream_metadata.get('parent', None)
+        if parent_tap_stream_id:
+            mdata = metadata.write(mdata, (), 'parent-tap-stream-id', parent_tap_stream_id)
+        mdata = metadata.to_list(mdata)
         field_metadata[stream_name] = mdata
 
     return schemas, field_metadata
