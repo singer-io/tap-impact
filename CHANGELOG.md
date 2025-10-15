@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.3
+  * Adds parent-tap-stream-id field to catalog for child streams [#46](https://github.com/singer-io/tap-impact/pull/46)
+
 ## 2.1.2
   * Bump dependency versions [#39](https://github.com/singer-io/tap-impact/pull/39)
 
