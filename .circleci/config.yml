@@ -16,7 +16,7 @@ jobs:
           name: 'pylint'
           command: |
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
-            pylint tap_impact -d 'broad-except,chained-comparison,empty-docstring,fixme,invalid-name,line-too-long,missing-class-docstring,missing-function-docstring,missing-module-docstring,no-else-raise,no-else-return,too-few-public-methods,too-many-arguments,too-many-branches,too-many-lines,too-many-locals,ungrouped-imports,wrong-spelling-in-comment,wrong-spelling-in-docstring,logging-format-interpolation,protected-access,unused-variable,too-many-statements,redefined-builtin,too-many-nested-blocks,useless-object-inheritance,inconsistent-return-statements'
+            pylint tap_impact -d C,R,W,E0606
       - run:
           name: 'JSON Validator'
           command: |

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0
+  * Upgrade Python to 3.12 in CircleCI [#48](https://github.com/singer-io/tap-impact/pull/48)
+  * Upgrade dependencies: `backoff`, `requests` and `singer-python`
+  * Fix schema nullability: `campaigns.categories` and 6 fields in `company_information` changed from `object` to `["object", "null"]`
+  * Add unit tests for `transform`, `sync` utilities, `client` error handling, and bookmark/start-date logic
+  * Add mock integration tests for discovery, bookmarks, pagination, all-fields, automatic-fields, start-date, and interrupted-sync
+
 ## 2.1.3
   * Adds parent-tap-stream-id field to catalog for child streams [#46](https://github.com/singer-io/tap-impact/pull/46)
 
