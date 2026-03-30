@@ -9,14 +9,16 @@ setup(name='tap-impact',
       classifiers=['Programming Language :: Python :: 3 :: Only'],
       py_modules=['tap_impact'],
       install_requires=[
-          'backoff==1.10.0',
-          'requests==2.32.4',
-          'singer-python==5.13.2'
+          'backoff==2.2.1',
+          'requests==2.33.0',
+          'singer-python==6.8.0'
       ],
       extras_require={
           'dev': [
               'ipdb',
-              'pylint==2.5.3'
+              'pylint==2.5.3',
+              'pytest',
+              'parameterized'
           ]
       },
       entry_points='''

@@ -1,26 +1,32 @@
 import unittest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from parameterized import parameterized
+
 from tap_impact.sync import get_bookmark
-from singer import utils
+
+
+_FIXED_NOW = datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+_30_DAYS_AGO = (_FIXED_NOW - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SZ')
+_3_YEARS_AGO = (_FIXED_NOW - timedelta(days=3 * 365)).strftime('%Y-%m-%dT%H:%M:%SZ')
+
 
 class TestBookmarkDateHandling(unittest.TestCase):
 
     def setUp(self):
-        """Set up commonly used variables."""
-        self.now = utils.now()
+        """Set up commonly used variables using the fixed reference time."""
+        self.now = _FIXED_NOW
         self.default_date = self.now - timedelta(days=3 * 365)
         self.default_date_str = self.default_date.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     @parameterized.expand([
         # Test case 1: Start date within 3 years
-        ({}, 'actions', (utils.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SZ'), (utils.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SZ')),
+        ({}, 'actions', _30_DAYS_AGO, _30_DAYS_AGO),
         # Test case 2: Bookmark date within 3 years but start date is older
-        ({"bookmarks": {"actions": (utils.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SZ')}}, 'actions', '2014-01-01T00:00:00Z', (utils.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SZ')),
-        # Test case 3: Start date older than 3 years
-        ({}, 'actions', '2019-01-01T00:00:00Z', (utils.now() - timedelta(days=3 * 365)).strftime('%Y-%m-%dT%H:%M:%SZ')),
-        # Test case 4: Bookmark date older than 3 years but start date is older
-        ({"bookmarks": {"actions": "2020-01-01T00:00:00Z"}}, 'actions', '2019-01-01T00:00:00Z', (utils.now() - timedelta(days=3 * 365)).strftime('%Y-%m-%dT%H:%M:%SZ')),
+        ({"bookmarks": {"actions": _30_DAYS_AGO}}, 'actions', '2014-01-01T00:00:00Z', _30_DAYS_AGO),
+        # Test case 3: Start date older than 3 years — clamps to default (3 years ago)
+        ({}, 'actions', '2019-01-01T00:00:00Z', _3_YEARS_AGO),
+        # Test case 4: Bookmark date older than 3 years — clamps to default
+        ({"bookmarks": {"actions": "2020-01-01T00:00:00Z"}}, 'actions', '2019-01-01T00:00:00Z', _3_YEARS_AGO),
     ])
     def test_bookmark_date(self, state, stream_name, start_date, expected_datetime):
         """Test actions stream with various start dates and bookmark handling."""
