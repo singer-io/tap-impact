@@ -57,15 +57,15 @@ class TestUpdateCurrentlySyncing(unittest.TestCase):
         self.assertNotIn("currently_syncing", state)
         mock_write_state.assert_called_once_with(state)
 
+    @patch("tap_impact.sync.singer.set_currently_syncing")
     @patch("tap_impact.sync.singer.write_state")
-    def test_none_with_no_existing_key_falls_to_else(self, mock_write_state):
+    def test_none_with_no_existing_key_falls_to_else(self, mock_write_state, mock_set):
         # When stream_name is None but 'currently_syncing' is NOT already in state,
-        # the function hits the else branch and calls singer.set_currently_syncing(state, None).
-        # singer sets state["currently_syncing"] = None rather than removing the key.
+        # the function should call singer.set_currently_syncing(state, None)
+        # instead of attempting to remove a non-existent key.
         state = {}
         update_currently_syncing(state, None)
-        # singer.set_currently_syncing was called, so currently_syncing exists (set to None)
-        self.assertIn("currently_syncing", state)
+        mock_set.assert_called_once_with(state, None)
         mock_write_state.assert_called_once_with(state)
 
 
