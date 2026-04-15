@@ -25,7 +25,7 @@
       "type": ["null", "string"]
     },
     "bogo_get_discount_percent": {
-      "type": ["null", "integer"]
+      "type": ["null", "number"]
     },
     "bogo_get_discount_type": {
       "type": ["null", "string"]
@@ -162,16 +162,16 @@
       "type": ["null", "string"]
     },
     "discount_maximum_percent": {
-      "type": ["null", "integer"]
+      "type": ["null", "number"]
     },
     "discount_percent": {
-      "type": ["null", "integer"]
+      "type": ["null", "number"]
     },
     "discount_percent_range_end": {
-      "type": ["null", "integer"]
+      "type": ["null", "number"]
     },
     "discount_percent_range_start": {
-      "type": ["null", "integer"]
+      "type": ["null", "number"]
     },
     "discount_type": {
       "type": ["null", "string"]
