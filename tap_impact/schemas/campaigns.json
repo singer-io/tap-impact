@@ -3,7 +3,7 @@
   "additionalProperties": false,
   "properties": {
     "categories": {
-      "type": "object",
+      "type": ["object", "null"],
       "additionalProperties": false,
       "properties": {
         "additional_category": {
