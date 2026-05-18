@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 import requests
+from urllib.parse import urlparse
 
 from tap_impact.client import (
     get_exception_for_error_code,
@@ -132,7 +133,9 @@ class TestImpactClientInit(unittest.TestCase):
             auth_token="TOK",
             api_catalog="Partners",
         )
-        self.assertTrue(client.base_url.startswith("https://api.impact.com"))
+        parsed = urlparse(client.base_url)
+        self.assertEqual(parsed.scheme, "https")
+        self.assertEqual(parsed.hostname, "api.impact.com")
 
     def test_different_api_catalog(self):
         client1 = ImpactClient("A", "T", "Advertisers")
