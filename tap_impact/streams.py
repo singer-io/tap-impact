@@ -10,7 +10,7 @@
 #   data_key: JSON element containing the records for the endpoint
 #   bookmark_type: Data type for bookmark, integer or datetime
 #   children: A collection of child endpoints (where the endpoint path includes the parent id)
-#   parent: On each of the children, the singular stream name for parent element
+#   parent: On each of the children, the plural stream name for parent element
 STREAMS = {
     'ads': {
         'path': 'Ads',
@@ -76,7 +76,7 @@ STREAMS = {
                 'data_key': 'Contacts',
                 'key_properties': ['id'],
                 'replication_method': 'FULL_TABLE',
-                'parent': 'campaign'
+                'parent': 'campaigns'
             },
             'conversion_paths': {
                 'path': 'Campaigns/{}/Models/<model_id>/ConversionPaths',
@@ -89,7 +89,7 @@ STREAMS = {
                 'data_key': 'Groups',
                 'key_properties': ['id'],
                 'replication_method': 'FULL_TABLE',
-                'parent': 'campaign'
+                'parent': 'campaigns'
             },
             'notes': {
                 'path': 'Campaigns/{}/Notes',
@@ -98,7 +98,7 @@ STREAMS = {
                 'replication_method': 'INCREMENTAL',
                 'replication_keys': ['modification_date'],
                 'bookmark_type': 'datetime',
-                'parent': 'campaign'
+                'parent': 'campaigns'
             }
         }
     },
@@ -113,7 +113,7 @@ STREAMS = {
                 'data_key': 'Items',
                 'key_properties': ['catalog_item_id'],
                 'replication_method': 'FULL_TABLE',
-                'parent': 'catalog'
+                'parent': 'catalogs'
             }
         }
     },

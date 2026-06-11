@@ -93,7 +93,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100,
-                cls.PARENT: "campaign",
+                cls.PARENT: "campaigns",
             },
             "conversion_paths": {
                 cls.PRIMARY_KEYS: {"uri"},
@@ -108,7 +108,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100,
-                cls.PARENT: "campaign",
+                cls.PARENT: "campaigns",
             },
             "notes": {
                 cls.PRIMARY_KEYS: {"id"},
@@ -116,7 +116,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: {"modification_date"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100,
-                cls.PARENT: "campaign",
+                cls.PARENT: "campaigns",
             },
             "catalogs": {
                 cls.PRIMARY_KEYS: {"id"},
@@ -131,7 +131,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100,
-                cls.PARENT: "catalog",
+                cls.PARENT: "catalogs",
             },
             "company_information": {
                 cls.PRIMARY_KEYS: {"company_name"},
