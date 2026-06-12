@@ -393,8 +393,6 @@ def update_currently_syncing(state, stream_name):
 
 
 def sync(client, config, catalog, state):
-    if 'start_date' not in config:
-        raise ValueError("'start_date' is required in config but was not provided.")
     start_date = config['start_date']
 
     # Get selected_streams from catalog, based on state last_stream
