@@ -19,9 +19,9 @@ REQUIRED_CONFIG_KEYS = [
     'user_agent'
 ]
 
-def do_discover(config):
+def do_discover(client, config):
     LOGGER.info('Starting discover')
-    catalog = discover(config)
+    catalog = discover(client, config)
     json.dump(catalog.to_dict(), sys.stdout, indent=2)
     LOGGER.info('Finished discover')
 
@@ -42,7 +42,7 @@ def main():
 
         config = parsed_args.config
         if parsed_args.discover:
-            do_discover(config)
+            do_discover(client, config)
         elif parsed_args.catalog:
             sync(client=client,
                  config=config,
