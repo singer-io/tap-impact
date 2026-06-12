@@ -16,7 +16,7 @@ jobs:
           name: 'pylint'
           command: |
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
-            pylint tap_impact -d C,R,W,E0606
+            pylint tap_impact -d C,R,W
       - run:
           name: 'JSON Validator'
           command: |

@@ -159,6 +159,7 @@ def sync_endpoint(client,
     end_dttm = utils.now()
     end_dt = end_dttm.date()
     start_dt = end_dt
+    date_ranges = [(start_dt, end_dt)]
 
     if bookmark_type == 'integer':
         last_integer = get_bookmark(state, stream_name, 0)
@@ -312,15 +313,12 @@ def sync_endpoint(client,
                         if process_child:
                             write_schema(catalog, child_stream_name)
                             # For each parent record
+                            if not id_fields:
+                                raise RuntimeError(
+                                    'Stream {} has no key_properties configured'.format(stream_name)
+                                )
+                            parent_id_field = 'id' if 'id' in id_fields else id_fields[0]
                             for record in transformed_data:
-                                i = 0
-                                # Set parent_id
-                                for id_field in id_fields:
-                                    if i == 0:
-                                        parent_id_field = id_field
-                                    if id_field == 'id':
-                                        parent_id_field = id_field
-                                    i = i + 1
                                 parent_id = record.get(parent_id_field)
 
                                 # sync_endpoint for child
@@ -395,8 +393,9 @@ def update_currently_syncing(state, stream_name):
 
 
 def sync(client, config, catalog, state):
-    if 'start_date' in config:
-        start_date = config['start_date']
+    if 'start_date' not in config:
+        raise ValueError("'start_date' is required in config but was not provided.")
+    start_date = config['start_date']
 
     # Get selected_streams from catalog, based on state last_stream
     #   last_stream = Previous currently synced stream, if the load was interrupted
