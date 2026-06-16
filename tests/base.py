@@ -72,6 +72,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: {"event_date"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100,
+                cls.PARENT: "campaigns",
             },
             "action_inquiries": {
                 cls.PRIMARY_KEYS: {"id"},
@@ -79,6 +80,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: {"creation_date"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100,
+                cls.PARENT: "campaigns",
             },
             "action_updates": {
                 cls.PRIMARY_KEYS: {"id"},
@@ -86,6 +88,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: {"update_date"},
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 100,
+                cls.PARENT: "campaigns",
             },
             "contacts": {
                 cls.PRIMARY_KEYS: {"id"},
@@ -101,6 +104,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100,
+                cls.PARENT: "campaigns",
             },
             "media_partner_groups": {
                 cls.PRIMARY_KEYS: {"id"},
@@ -160,6 +164,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100,
+                cls.PARENT: "exception_lists",
             },
             "ftp_file_submissions": {
                 cls.PRIMARY_KEYS: {"batch_id"},
@@ -209,6 +214,7 @@ class ImpactBaseTest:
                 cls.REPLICATION_KEYS: set(),
                 cls.OBEYS_START_DATE: False,
                 cls.API_LIMIT: 100,
+                cls.PARENT: "reports",
             },
             "tracking_value_requests": {
                 cls.PRIMARY_KEYS: {"id"},
