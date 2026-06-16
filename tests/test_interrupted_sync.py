@@ -30,7 +30,7 @@ class ImpactInterruptedSyncTest(ImpactBaseTest, unittest.TestCase):
     """Verify sync resumes correctly after an interruption."""
 
     def _get_catalog(self):
-        return discover(self.config)
+        return discover(MagicMock(), self.config)
 
     def _sync(self, stream_name, data_key, records,
               state=None, bookmark_field=None, bookmark_type=None,

@@ -58,7 +58,7 @@ class ImpactStartDateTest(ImpactBaseTest, unittest.TestCase):
     """Verify start_date correctly filters records for INCREMENTAL streams."""
 
     def _get_catalog(self):
-        return discover(self.config)
+        return discover(MagicMock(), self.config)
 
     # Later start_date returns fewer or equal records
 

@@ -26,7 +26,7 @@ class ImpactAutomaticFieldsTest(ImpactBaseTest, unittest.TestCase):
     """Verify automatic fields are always replicated, even with minimal selection."""
 
     def _get_catalog(self):
-        return discover(self.config)
+        return discover(MagicMock(), self.config)
 
     def _sync_stream_minimal(self, stream_name, data_key, records,
                              bookmark_field=None, bookmark_type=None,
