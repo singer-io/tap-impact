@@ -21,10 +21,11 @@ def _check_stream_access(client, stream_name, path):
     try:
         client.request('GET', path=path, params={'PageSize': 1}, endpoint=stream_name)
         return True
-    except ImpactForbiddenError:
+    except ImpactForbiddenError as ex:
         LOGGER.warning(
-            "Stream '%s' does not have read permission, excluding from catalog.",
+            "Excluding Unauthorized Stream: %s, from catalog. HTTP-Error-Message '%s'",
             stream_name,
+            str(ex)
         )
         return False
 
@@ -65,7 +66,7 @@ def _apply_access_checks(client, schemas, field_metadata):
 
     if not accessible_streams:
         raise ImpactForbiddenError(
-            "HTTP-error-code: 403, Error: The credentials do not have "
+            "HTTP-error-code: 403, HTTP-Error-Message: The credentials do not have "
             "'read' access to any supported streams."
         )
     elif inaccessible_streams:
