@@ -23,7 +23,7 @@ def _check_stream_access(client, stream_name, path):
         return True
     except ImpactForbiddenError as ex:
         LOGGER.warning(
-            "Excluding Unauthorized Stream: %s, from catalog. HTTP-Error-Message '%s'",
+            "Excluding unauthorized stream: '%s' from catalog. HTTP-Error-Message: '%s'",
             stream_name,
             str(ex)
         )
