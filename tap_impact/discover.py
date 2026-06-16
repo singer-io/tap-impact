@@ -61,16 +61,16 @@ def _apply_access_checks(client, schemas, field_metadata):
     child_to_parent = _get_child_to_parent_map()
     _prune_inaccessible_children(schemas, field_metadata, child_to_parent)
 
-    if inaccessible_streams:
-        total_parent_streams = len(STREAMS)
-        if len(inaccessible_streams) == total_parent_streams:
-            raise ImpactForbiddenError(
-                "HTTP-error-code: 403, Error: The account credentials supplied do not have 'read' access to any "
-                "of the streams supported by the tap. Data collection cannot be initiated due to lack of permissions."
-            )
+    accessible_streams = [s for s in STREAMS if s in schemas]
+
+    if not accessible_streams:
+        raise ImpactForbiddenError(
+            "HTTP-error-code: 403, Error: The credentials do not have "
+            "'read' access to any supported streams."
+        )
+    elif inaccessible_streams:
         LOGGER.warning(
-            "The account credentials supplied do not have 'read' access to the following stream(s): %s. "
-            "These streams have been excluded from the catalog.",
+            "No 'read' access to stream(s): %s. Excluded from catalog.",
             ", ".join(inaccessible_streams),
         )
 
