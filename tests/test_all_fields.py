@@ -29,7 +29,7 @@ class ImpactAllFieldsTest(ImpactBaseTest, unittest.TestCase):
     """Verify all schema fields are present when running sync with all fields selected."""
 
     def _get_catalog(self):
-        return discover(self.config)
+        return discover(MagicMock(), self.config)
 
     def _sync_stream(self, stream_name, data_key, records,
                      bookmark_field=None, bookmark_type=None,

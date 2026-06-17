@@ -25,7 +25,7 @@ class ImpactPaginationTest(ImpactBaseTest, unittest.TestCase):
     """Verify page-based pagination for streams that paginate."""
 
     def _get_catalog(self):
-        return discover(self.config)
+        return discover(MagicMock(), self.config)
 
     # Multi-page sync fetches all pages
 

@@ -30,7 +30,7 @@ class ImpactBookmarkTest(ImpactBaseTest, unittest.TestCase):
     """Verify bookmark behaviour for INCREMENTAL streams."""
 
     def _get_catalog(self):
-        return discover({**self.config, "model_id": "mock_model"})
+        return discover(MagicMock(), {**self.config, "model_id": "mock_model"})
 
     def _invoice_records(self, created_date="2024-03-01T00:00:00Z"):
         """Minimal valid invoice record."""

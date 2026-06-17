@@ -43,7 +43,8 @@ STREAMS = {
                 'key_properties': ['id'],
                 'replication_method': 'INCREMENTAL',
                 'replication_keys': ['event_date'],
-                'bookmark_type': 'datetime'
+                'bookmark_type': 'datetime',
+                'parent': 'campaigns'
             },
             'action_inquiries': {
                 'path': 'ActionInquiries',
@@ -56,7 +57,8 @@ STREAMS = {
                 'key_properties': ['id'],
                 'replication_method': 'INCREMENTAL',
                 'replication_keys': ['creation_date'],
-                'bookmark_type': 'datetime'
+                'bookmark_type': 'datetime',
+                'parent': 'campaigns'
             },
             'action_updates': {
                 'path': 'ActionUpdates',
@@ -69,7 +71,8 @@ STREAMS = {
                 'key_properties': ['id'],
                 'replication_method': 'INCREMENTAL',
                 'replication_keys': ['update_date'],
-                'bookmark_type': 'datetime'
+                'bookmark_type': 'datetime',
+                'parent': 'campaigns'
             },
             'contacts': {
                 'path': 'Campaigns/{}/Contacts',
@@ -82,7 +85,8 @@ STREAMS = {
                 'path': 'Campaigns/{}/Models/<model_id>/ConversionPaths',
                 'data_key': 'ConversionPaths',
                 'key_properties': ['uri'],
-                'replication_method': 'FULL_TABLE'
+                'replication_method': 'FULL_TABLE',
+                'parent': 'campaigns'
             },
             'media_partner_groups': {
                 'path': 'Campaigns/{}/MediaPartnerGroups',
@@ -139,7 +143,8 @@ STREAMS = {
                 'path': 'ExceptionLists/{}/Items',
                 'data_key': 'ExceptionListItems',
                 'key_properties': ['id'],
-                'replication_method': 'FULL_TABLE'
+                'replication_method': 'FULL_TABLE',
+                'parent': 'exception_lists'
             }
         }
     },
@@ -190,7 +195,8 @@ STREAMS = {
                 'path': 'Reports/{}/MetaData',
                 'data_key': 'MetaData',
                 'key_properties': ['id'],
-                'replication_method': 'FULL_TABLE'
+                'replication_method': 'FULL_TABLE',
+                'parent': 'reports'
             }
         }
     },

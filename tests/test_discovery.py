@@ -4,6 +4,7 @@ Calls tap_impact.discover.discover() directly — no HTTP calls needed
 since discovery only reads local schema JSON files.
 """
 import unittest
+from unittest.mock import MagicMock
 from singer import metadata
 
 try:
@@ -19,11 +20,11 @@ class ImpactDiscoveryTest(ImpactBaseTest, unittest.TestCase):
 
     def _get_catalog(self):
         """Run discover with mock config (no model_id → conversion_paths excluded)."""
-        return discover(self.config)
+        return discover(MagicMock(), self.config)
 
     def _get_catalog_with_model(self):
         """Run discover with a model_id to include conversion_paths."""
-        return discover({**self.config, "model_id": "mock_model_123"})
+        return discover(MagicMock(), {**self.config, "model_id": "mock_model_123"})
 
     def test_discovery_returns_expected_streams(self):
         """Verify all expected streams (minus conversion_paths) are discovered."""
