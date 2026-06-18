@@ -24,18 +24,23 @@ jobs:
             stitch-validate-json tap_impact/schemas/*.json
       - add_ssh_keys
       - run:
-          name: 'Unit Tests + Integration Tests'
+          name: 'Unit Tests'
           command: |
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
             uv pip install pytest coverage parameterized
-            coverage run -m pytest tests -v
+            coverage run -m pytest tests/unittests -v
             coverage html
           when: always
       - store_test_results:
           path: test_output/report.xml
       - store_artifacts:
           path: htmlcov
-
+      - run:
+          name: 'Mock Integration Tests'
+          command: |
+            source /usr/local/share/virtualenvs/tap-impact/bin/activate
+            uv pip install pytest
+            coverage run -m pytest tests/mock_integration/ -v
       # - add_ssh_keys
       # TODO | https://stitchdata.atlassian.net/browse/SRCE-4593 (SRCE-4593 -> SRCE-4597)
       # - run:

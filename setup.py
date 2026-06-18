@@ -18,7 +18,8 @@ setup(name='tap-impact',
               'ipdb',
               'pylint',
               'pytest',
-              'parameterized'
+              'parameterized',
+              'coverage'
           ]
       },
       entry_points='''
