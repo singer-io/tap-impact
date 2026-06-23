@@ -6,7 +6,7 @@ should be present in at least one emitted record when all fields are selected.
 import unittest
 from unittest.mock import MagicMock, patch
 
-from .base import ImpactBaseTest
+from .base import ImpactMockBaseTest
 
 from tap_impact.discover import discover
 from tap_impact.sync import sync_endpoint
@@ -22,7 +22,7 @@ def _make_client(response):
     return c
 
 
-class ImpactAllFieldsTest(ImpactBaseTest, unittest.TestCase):
+class ImpactAllFieldsTest(ImpactMockBaseTest, unittest.TestCase):
     """Verify all schema fields are present when running sync with all fields selected."""
 
     def _get_catalog(self):

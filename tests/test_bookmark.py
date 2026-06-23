@@ -28,11 +28,11 @@ class ImpactBookmarkTest(BookmarkTest, ImpactBaseTest):
     def calculate_new_bookmarks(self):
         """Return bookmarks that result in some records being synced in sync 2."""
         return {
-            "invoices": {"created_date": "2020-06-01T00:00:00Z"},
-            "api_submissions": {"submission_date": "2020-06-01T00:00:00Z"},
-            "ftp_file_submissions": {"submission_date": "2020-06-01T00:00:00Z"},
-            "actions": {"event_date": "2020-06-01T00:00:00Z"},
-            "action_inquiries": {"creation_date": "2020-06-01T00:00:00Z"},
-            "action_updates": {"update_date": "2020-06-01T00:00:00Z"},
-            "notes": {"modification_date": "2020-06-01T00:00:00Z"},
+            "invoices": "2020-06-01T00:00:00Z",
+            "api_submissions": "2020-06-01T00:00:00Z",
+            "ftp_file_submissions": "2020-06-01T00:00:00Z",
+            "actions": "2020-06-01T00:00:00Z",
+            "action_inquiries": "2020-06-01T00:00:00Z",
+            "action_updates": "2020-06-01T00:00:00Z",
+            "notes": "2020-06-01T00:00:00Z",
         }

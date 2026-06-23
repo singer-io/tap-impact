@@ -6,7 +6,7 @@ Uses sync_endpoint directly with a MagicMock client.
 import unittest
 from unittest.mock import MagicMock, patch
 
-from .base import ImpactBaseTest
+from .base import ImpactMockBaseTest
 
 from tap_impact.discover import discover
 from tap_impact.sync import sync_endpoint
@@ -23,7 +23,7 @@ def _make_mock_client(side_effects):
     return mock_client
 
 
-class ImpactBookmarkTest(ImpactBaseTest, unittest.TestCase):
+class ImpactBookmarkTest(ImpactMockBaseTest, unittest.TestCase):
     """Verify bookmark behaviour for INCREMENTAL streams."""
 
     def _get_catalog(self):
@@ -263,4 +263,205 @@ class ImpactBookmarkTest(ImpactBaseTest, unittest.TestCase):
         self.assertEqual(
             state["bookmarks"].get("api_submissions"),
             "2023-01-01T00:00:00Z",
+        )
+
+    # Child stream bookmark tests
+
+    @patch("tap_impact.sync.singer.write_schema")
+    @patch("tap_impact.sync.singer.write_state")
+    @patch("tap_impact.sync.singer.messages.write_record")
+    def test_incremental_child_stream_bookmark_written_after_sync(self,
+                                                                   mock_write_record,
+                                                                   mock_write_state,
+                                                                   mock_write_schema):
+        """Syncing a parent stream with an INCREMENTAL child must write a bookmark for the child."""
+        catalog = self._get_catalog()
+        state = {}
+
+        campaign_response = {
+            "@total": "1",
+            "@pagesize": "100",
+            "Campaigns": [{"id": 123, "name": "Test Campaign"}],
+        }
+        notes_response = {
+            "@total": "1",
+            "@pagesize": "100",
+            "Notes": [{"id": 1, "modification_date": "2024-03-01T00:00:00Z", "note": "Hello"}],
+        }
+
+        mock_client = _make_mock_client([campaign_response, notes_response])
+
+        sync_endpoint(
+            client=mock_client,
+            catalog=catalog,
+            state=state,
+            config=self.config,
+            start_date="2020-01-01T00:00:00Z",
+            stream_name="campaigns",
+            path="Campaigns",
+            endpoint_config={
+                "children": {
+                    "notes": {
+                        "path": "Campaigns/{}/Notes",
+                        "data_key": "Notes",
+                        "key_properties": ["id"],
+                        "replication_method": "INCREMENTAL",
+                        "replication_keys": ["modification_date"],
+                        "bookmark_type": "datetime",
+                        "parent": "campaigns",
+                    }
+                }
+            },
+            static_params={},
+            bookmark_field=None,
+            bookmark_type=None,
+            data_key="Campaigns",
+            id_fields=["id"],
+            selected_streams=["campaigns", "notes"],
+        )
+
+        self.assertIn("bookmarks", state,
+                      msg="State must contain bookmarks after syncing a child INCREMENTAL stream")
+        self.assertIn("notes", state["bookmarks"],
+                      msg="Bookmark must be written for the child 'notes' stream")
+        self.assertIsNotNone(state["bookmarks"]["notes"],
+                             msg="Notes bookmark value must not be None")
+
+    @patch("tap_impact.sync.singer.write_schema")
+    @patch("tap_impact.sync.singer.write_state")
+    @patch("tap_impact.sync.singer.messages.write_record")
+    def test_child_stream_bookmark_filters_older_records(self,
+                                                          mock_write_record,
+                                                          mock_write_state,
+                                                          mock_write_schema):
+        """Child stream bookmark must filter out records before the bookmark date."""
+        catalog = self._get_catalog()
+        bookmark_date = "2024-02-01T00:00:00Z"
+        state = {"bookmarks": {"notes": bookmark_date}}
+
+        campaign_response = {
+            "@total": "1",
+            "@pagesize": "100",
+            "Campaigns": [{"id": 123, "name": "Test Campaign"}],
+        }
+        notes_response = {
+            "@total": "2",
+            "@pagesize": "100",
+            "Notes": [
+                {"id": 1, "modification_date": "2024-01-01T00:00:00Z", "note": "Old"},  # before bookmark
+                {"id": 2, "modification_date": "2024-03-01T00:00:00Z", "note": "New"},  # after bookmark
+            ],
+        }
+
+        records_written = []
+        mock_write_record.side_effect = lambda s, r, time_extracted=None: records_written.append((s, r))
+
+        mock_client = _make_mock_client([campaign_response, notes_response])
+
+        sync_endpoint(
+            client=mock_client,
+            catalog=catalog,
+            state=state,
+            config=self.config,
+            start_date="2020-01-01T00:00:00Z",
+            stream_name="campaigns",
+            path="Campaigns",
+            endpoint_config={
+                "children": {
+                    "notes": {
+                        "path": "Campaigns/{}/Notes",
+                        "data_key": "Notes",
+                        "key_properties": ["id"],
+                        "replication_method": "INCREMENTAL",
+                        "replication_keys": ["modification_date"],
+                        "bookmark_type": "datetime",
+                        "parent": "campaigns",
+                    }
+                }
+            },
+            static_params={},
+            bookmark_field=None,
+            bookmark_type=None,
+            data_key="Campaigns",
+            id_fields=["id"],
+            selected_streams=["campaigns", "notes"],
+        )
+
+        notes_records = [r for s, r in records_written if s == "notes"]
+        self.assertEqual(
+            len(notes_records), 1,
+            msg="Only child (notes) records on or after the bookmark should be written",
+        )
+        self.assertGreaterEqual(
+            notes_records[0]["modification_date"][:19],
+            bookmark_date[:19],
+            msg="Written notes record must be on or after the bookmark date",
+        )
+
+    @patch("tap_impact.sync.singer.write_schema")
+    @patch("tap_impact.sync.singer.write_state")
+    @patch("tap_impact.sync.singer.messages.write_record")
+    def test_full_table_child_stream_writes_no_bookmark(self,
+                                                         mock_write_record,
+                                                         mock_write_state,
+                                                         mock_write_schema):
+        """A FULL_TABLE child stream must replicate all records and NOT write a bookmark."""
+        catalog = self._get_catalog()
+        state = {}
+
+        campaign_response = {
+            "@total": "1",
+            "@pagesize": "100",
+            "Campaigns": [{"id": 123, "name": "Test Campaign"}],
+        }
+        contacts_response = {
+            "@total": "2",
+            "@pagesize": "100",
+            "Contacts": [
+                {"id": 1, "name": "Alice"},
+                {"id": 2, "name": "Bob"},
+            ],
+        }
+
+        records_written = []
+        mock_write_record.side_effect = lambda s, r, time_extracted=None: records_written.append((s, r))
+
+        mock_client = _make_mock_client([campaign_response, contacts_response])
+
+        sync_endpoint(
+            client=mock_client,
+            catalog=catalog,
+            state=state,
+            config=self.config,
+            start_date="2020-01-01T00:00:00Z",
+            stream_name="campaigns",
+            path="Campaigns",
+            endpoint_config={
+                "children": {
+                    "contacts": {
+                        "path": "Campaigns/{}/Contacts",
+                        "data_key": "Contacts",
+                        "key_properties": ["id"],
+                        "replication_method": "FULL_TABLE",
+                        "parent": "campaigns",
+                    }
+                }
+            },
+            static_params={},
+            bookmark_field=None,
+            bookmark_type=None,
+            data_key="Campaigns",
+            id_fields=["id"],
+            selected_streams=["campaigns", "contacts"],
+        )
+
+        contacts_records = [r for s, r in records_written if s == "contacts"]
+        self.assertEqual(
+            len(contacts_records), 2,
+            msg="All child (contacts) records must be written for a FULL_TABLE child stream",
+        )
+        bookmarks = state.get("bookmarks", {})
+        self.assertNotIn(
+            "contacts", bookmarks,
+            msg="FULL_TABLE child stream must NOT write a bookmark to state",
         )

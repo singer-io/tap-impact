@@ -6,7 +6,7 @@ returns only records on or after that date.
 import unittest
 from unittest.mock import MagicMock, patch
 
-from .base import ImpactBaseTest
+from .base import ImpactMockBaseTest
 
 from tap_impact.discover import discover
 from tap_impact.sync import sync_endpoint
@@ -51,7 +51,7 @@ def _run_sync(catalog, config, stream_name, data_key, records,
     return written
 
 
-class ImpactStartDateTest(ImpactBaseTest, unittest.TestCase):
+class ImpactStartDateTest(ImpactMockBaseTest, unittest.TestCase):
     """Verify start_date correctly filters records for INCREMENTAL streams."""
 
     def _get_catalog(self):
@@ -187,4 +187,136 @@ class ImpactStartDateTest(ImpactBaseTest, unittest.TestCase):
         self.assertGreaterEqual(
             len(written_1), len(written_2),
             msg="Earlier start_date_1 must return ≥ records than later start_date_2",
+        )
+
+    # Child stream start_date filtering
+    def test_child_incremental_stream_start_date_filters_old_records(self):
+        """
+        The start_date used as initial bookmark for a child INCREMENTAL stream (notes)
+        must filter out records before that date.
+        """
+        catalog = self._get_catalog()
+        start_date = "2021-01-01T00:00:00Z"
+
+        parent_response = {
+            "@total": "1",
+            "@pagesize": "100",
+            "Campaigns": [{"id": 123, "name": "Test Campaign"}],
+        }
+        child_records = [
+            {"id": 1, "modification_date": "2020-06-01T00:00:00Z"},  # before start_date
+            {"id": 2, "modification_date": "2021-03-01T00:00:00Z"},  # after start_date
+            {"id": 3, "modification_date": "2022-01-01T00:00:00Z"},  # after start_date
+        ]
+        child_response = {"@total": "3", "@pagesize": "100", "Notes": child_records}
+
+        written = []
+        with patch("tap_impact.sync.singer.write_schema"), \
+             patch("tap_impact.sync.singer.write_state"), \
+             patch("tap_impact.sync.singer.messages.write_record",
+                   side_effect=lambda s, r, time_extracted=None: written.append((s, r))):
+            sync_endpoint(
+                client=_make_client([parent_response, child_response]),
+                catalog=catalog,
+                state={},
+                config={**self.config, "start_date": start_date},
+                start_date=start_date,
+                stream_name="campaigns",
+                path="Campaigns",
+                endpoint_config={
+                    "children": {
+                        "notes": {
+                            "path": "Campaigns/{}/Notes",
+                            "data_key": "Notes",
+                            "key_properties": ["id"],
+                            "replication_method": "INCREMENTAL",
+                            "replication_keys": ["modification_date"],
+                            "bookmark_type": "datetime",
+                            "parent": "campaigns",
+                        }
+                    }
+                },
+                static_params={},
+                bookmark_field=None,
+                bookmark_type=None,
+                data_key="Campaigns",
+                id_fields=["id"],
+                selected_streams=["campaigns", "notes"],
+            )
+
+        notes_written = [r for s, r in written if s == "notes"]
+        self.assertEqual(
+            len(notes_written), 2,
+            msg="Only notes records on/after start_date must be written",
+        )
+        for record in notes_written:
+            self.assertGreaterEqual(
+                record["modification_date"], start_date,
+                msg=f"Notes record {record['id']} with modification_date "
+                    f"{record['modification_date']} should be filtered by start_date",
+            )
+
+    def test_child_incremental_stream_later_start_date_returns_fewer_records(self):
+        """
+        A later start_date for a child INCREMENTAL stream must yield ≤ records
+        than an earlier start_date.
+        """
+        catalog = self._get_catalog()
+
+        parent_response = {
+            "@total": "1",
+            "@pagesize": "100",
+            "Campaigns": [{"id": 123, "name": "Test Campaign"}],
+        }
+        child_records = [
+            {"id": 1, "modification_date": "2019-01-01T00:00:00Z"},
+            {"id": 2, "modification_date": "2020-06-01T00:00:00Z"},
+            {"id": 3, "modification_date": "2021-03-01T00:00:00Z"},
+            {"id": 4, "modification_date": "2022-08-01T00:00:00Z"},
+        ]
+        child_response = {"@total": "4", "@pagesize": "100", "Notes": child_records}
+        child_endpoint_config = {
+            "children": {
+                "notes": {
+                    "path": "Campaigns/{}/Notes",
+                    "data_key": "Notes",
+                    "key_properties": ["id"],
+                    "replication_method": "INCREMENTAL",
+                    "replication_keys": ["modification_date"],
+                    "bookmark_type": "datetime",
+                    "parent": "campaigns",
+                }
+            }
+        }
+
+        def _run_child_sync(start_date):
+            written = []
+            with patch("tap_impact.sync.singer.write_schema"), \
+                 patch("tap_impact.sync.singer.write_state"), \
+                 patch("tap_impact.sync.singer.messages.write_record",
+                       side_effect=lambda s, r, time_extracted=None: written.append((s, r))):
+                sync_endpoint(
+                    client=_make_client([parent_response, child_response]),
+                    catalog=catalog,
+                    state={},
+                    config={**self.config, "start_date": start_date},
+                    start_date=start_date,
+                    stream_name="campaigns",
+                    path="Campaigns",
+                    endpoint_config=child_endpoint_config,
+                    static_params={},
+                    bookmark_field=None,
+                    bookmark_type=None,
+                    data_key="Campaigns",
+                    id_fields=["id"],
+                    selected_streams=["campaigns", "notes"],
+                )
+            return [r for s, r in written if s == "notes"]
+
+        written_early = _run_child_sync("2019-01-01T00:00:00Z")
+        written_late = _run_child_sync("2021-01-01T00:00:00Z")
+
+        self.assertLessEqual(
+            len(written_late), len(written_early),
+            msg="Later start_date for child (notes) must return ≤ records than earlier one",
         )

@@ -3,7 +3,7 @@ import json
 import os
 
 
-class ImpactBaseTest:
+class ImpactMockBaseTest:
     """Base test mixin for tap-impact mock integration tests.
 
     Provides stream metadata, mock config, and schema-driven record generation.
@@ -276,16 +276,16 @@ class ImpactBaseTest:
         if "anyOf" in schema:
             for sub in schema["anyOf"]:
                 if sub.get("type") != "null":
-                    return ImpactBaseTest._generate_value(sub, date_value)
+                    return ImpactMockBaseTest._generate_value(sub, date_value)
             return None
-        schema_type = ImpactBaseTest._schema_type(schema)
+        schema_type = ImpactMockBaseTest._schema_type(schema)
         if schema_type == "object":
             return {
-                key: ImpactBaseTest._generate_value(val, date_value)
+                key: ImpactMockBaseTest._generate_value(val, date_value)
                 for key, val in schema.get("properties", {}).items()
             }
         if schema_type == "array":
-            return [ImpactBaseTest._generate_value(
+            return [ImpactMockBaseTest._generate_value(
                 schema.get("items", {"type": "string"}), date_value)]
         if schema_type == "string":
             fmt = schema.get("format")

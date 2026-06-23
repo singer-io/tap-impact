@@ -5,7 +5,7 @@ Verifies the tap keeps requesting pages until the API signals end-of-data.
 import unittest
 from unittest.mock import MagicMock, patch
 
-from .base import ImpactBaseTest
+from .base import ImpactMockBaseTest
 
 from tap_impact.discover import discover
 from tap_impact.sync import sync_endpoint
@@ -18,7 +18,7 @@ def _make_client(responses):
     return c
 
 
-class ImpactPaginationTest(ImpactBaseTest, unittest.TestCase):
+class ImpactPaginationTest(ImpactMockBaseTest, unittest.TestCase):
     """Verify page-based pagination for streams that paginate."""
 
     def _get_catalog(self):
@@ -194,3 +194,67 @@ class ImpactPaginationTest(ImpactBaseTest, unittest.TestCase):
         self.assertEqual(len(records_written), 250)
         # Bookmark should be updated to the latest date seen
         self.assertIn("invoices", state.get("bookmarks", {}))
+
+    # Child stream pagination
+    @patch("tap_impact.sync.singer.write_schema")
+    @patch("tap_impact.sync.singer.write_state")
+    @patch("tap_impact.sync.singer.messages.write_record")
+    def test_child_stream_fetches_multiple_pages(self, mock_write_record, mock_write_state, mock_write_schema):
+        """
+        Verify a child stream (contacts under campaigns) correctly paginates
+        across multiple pages of child records for each parent record.
+        """
+        catalog = self._get_catalog()
+        records_written = []
+        mock_write_record.side_effect = lambda s, r, time_extracted=None: records_written.append((s, r))
+
+        parent_response = {
+            "@total": "1",
+            "@pagesize": "100",
+            "Campaigns": [{"id": 123, "name": "Test Campaign"}],
+        }
+        # Child page 1 has @nextpageuri; child page 2 does not
+        child_page1 = {
+            "@total": "150",
+            "@pagesize": "100",
+            "@nextpageuri": "/Advertisers/mock/Campaigns/123/Contacts.json?Page=2",
+            "Contacts": [{"id": i, "name": f"Contact {i}"} for i in range(1, 101)],
+        }
+        child_page2 = {
+            "@total": "150",
+            "@pagesize": "100",
+            "Contacts": [{"id": i, "name": f"Contact {i}"} for i in range(101, 151)],
+        }
+
+        sync_endpoint(
+            client=_make_client([parent_response, child_page1, child_page2]),
+            catalog=catalog,
+            state={},
+            config=self.config,
+            start_date="2020-01-01T00:00:00Z",
+            stream_name="campaigns",
+            path="Campaigns",
+            endpoint_config={
+                "children": {
+                    "contacts": {
+                        "path": "Campaigns/{}/Contacts",
+                        "data_key": "Contacts",
+                        "key_properties": ["id"],
+                        "replication_method": "FULL_TABLE",
+                        "parent": "campaigns",
+                    }
+                }
+            },
+            static_params={},
+            bookmark_field=None,
+            bookmark_type=None,
+            data_key="Campaigns",
+            id_fields=["id"],
+            selected_streams=["campaigns", "contacts"],
+        )
+
+        contacts_written = [r for s, r in records_written if s == "contacts"]
+        self.assertEqual(
+            len(contacts_written), 150,
+            msg="All 150 child contact records across 2 pages must be written",
+        )

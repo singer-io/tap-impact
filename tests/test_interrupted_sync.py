@@ -26,7 +26,7 @@ class ImpactInterruptedSyncTest(InterruptedSyncTest, ImpactBaseTest):
         return {
             "currently_syncing": "invoices",
             "bookmarks": {
-                "api_submissions": {"submission_date": "2020-06-01T00:00:00Z"},
-                "invoices": {"created_date": "2020-06-01T00:00:00Z"},
+                "api_submissions": "2020-06-01T00:00:00Z",
+                "invoices": "2020-06-01T00:00:00Z",
             },
         }

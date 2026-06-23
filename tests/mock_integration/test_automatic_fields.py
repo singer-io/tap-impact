@@ -6,7 +6,7 @@ Verifies that even when no optional fields are selected, automatic fields
 import unittest
 from unittest.mock import MagicMock, patch
 
-from .base import ImpactBaseTest
+from .base import ImpactMockBaseTest
 
 from tap_impact.discover import discover
 from tap_impact.sync import sync_endpoint
@@ -19,7 +19,7 @@ def _make_client(response):
     return c
 
 
-class ImpactAutomaticFieldsTest(ImpactBaseTest, unittest.TestCase):
+class ImpactAutomaticFieldsTest(ImpactMockBaseTest, unittest.TestCase):
     """Verify automatic fields are always replicated, even with minimal selection."""
 
     def _get_catalog(self):

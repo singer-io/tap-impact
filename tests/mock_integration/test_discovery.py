@@ -7,12 +7,12 @@ import unittest
 from unittest.mock import MagicMock
 from singer import metadata
 
-from .base import ImpactBaseTest
+from .base import ImpactMockBaseTest
 
 from tap_impact.discover import discover
 
 
-class ImpactDiscoveryTest(ImpactBaseTest, unittest.TestCase):
+class ImpactDiscoveryTest(ImpactMockBaseTest, unittest.TestCase):
     """Verify discover() returns the correct catalog without any API calls."""
 
     def _get_catalog(self):

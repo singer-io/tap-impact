@@ -7,7 +7,7 @@ fully replicate regardless of any saved state.
 import unittest
 from unittest.mock import MagicMock, patch
 
-from .base import ImpactBaseTest
+from .base import ImpactMockBaseTest
 
 from tap_impact.discover import discover
 from tap_impact.sync import sync_endpoint
@@ -23,7 +23,7 @@ def _make_client(responses):
     return c
 
 
-class ImpactInterruptedSyncTest(ImpactBaseTest, unittest.TestCase):
+class ImpactInterruptedSyncTest(ImpactMockBaseTest, unittest.TestCase):
     """Verify sync resumes correctly after an interruption."""
 
     def _get_catalog(self):
@@ -207,3 +207,130 @@ class ImpactInterruptedSyncTest(ImpactBaseTest, unittest.TestCase):
         self.assertGreaterEqual(len(written2), 1)
         written_ids = [str(r["id"]) for r in written2]
         self.assertIn("3", written_ids, msg="New record after bookmark must be written")
+
+    # Child stream interrupted sync
+
+    def _sync_with_children(self, parent_stream, parent_data_key, parent_records,
+                             child_stream, child_endpoint_config,
+                             child_data_key, child_records,
+                             state=None, child_bookmark_field=None,
+                             child_bookmark_type=None):
+        """Run sync_endpoint for a parent stream with one child and return (written, state)."""
+        catalog = self._get_catalog()
+        written = []
+        if state is None:
+            state = {}
+        start_date = state.get("bookmarks", {}).get(child_stream) or self.config["start_date"]
+
+        parent_response = {
+            "@total": str(len(parent_records)),
+            "@pagesize": "100",
+            parent_data_key: parent_records,
+        }
+        child_response = {
+            "@total": str(len(child_records)),
+            "@pagesize": "100",
+            child_data_key: child_records,
+        }
+        endpoint_config = {
+            "children": {
+                child_stream: child_endpoint_config,
+            }
+        }
+
+        with patch("tap_impact.sync.singer.write_schema"), \
+             patch("tap_impact.sync.singer.write_state"), \
+             patch("tap_impact.sync.singer.messages.write_record",
+                   side_effect=lambda s, r, time_extracted=None: written.append((s, r))):
+            sync_endpoint(
+                client=_make_client([parent_response, child_response]),
+                catalog=catalog,
+                state=state,
+                config=self.config,
+                start_date=start_date,
+                stream_name=parent_stream,
+                path=parent_data_key,
+                endpoint_config=endpoint_config,
+                static_params={},
+                bookmark_field=None,
+                bookmark_type=None,
+                data_key=parent_data_key,
+                id_fields=["id"],
+                selected_streams=[parent_stream, child_stream],
+            )
+        return written, state
+
+    def test_interrupted_child_incremental_stream_resumes_from_bookmark(self):
+        """
+        Simulate an interrupted sync for a child INCREMENTAL stream (notes).
+        Verify that on resumption only notes records on/after the bookmark are emitted.
+        """
+        bookmark_date = "2021-06-15T00:00:00Z"
+        interrupted_state = {"bookmarks": {"notes": bookmark_date}}
+
+        parent_records = [{"id": 123, "name": "Test Campaign"}]
+        child_records = [
+            {"id": 1, "modification_date": "2021-01-01T00:00:00Z"},  # before — filtered
+            {"id": 2, "modification_date": "2021-06-15T00:00:00Z"},  # boundary
+            {"id": 3, "modification_date": "2021-09-01T00:00:00Z"},  # new
+        ]
+        child_endpoint_config = {
+            "path": "Campaigns/{}/Notes",
+            "data_key": "Notes",
+            "key_properties": ["id"],
+            "replication_method": "INCREMENTAL",
+            "replication_keys": ["modification_date"],
+            "bookmark_type": "datetime",
+            "parent": "campaigns",
+        }
+
+        written, _ = self._sync_with_children(
+            "campaigns", "Campaigns", parent_records,
+            "notes", child_endpoint_config, "Notes", child_records,
+            state=interrupted_state,
+            child_bookmark_field="modification_date",
+            child_bookmark_type="datetime",
+        )
+
+        def _normalize(dt_str):
+            return dt_str[:19] + "Z" if len(dt_str) > 20 else dt_str
+
+        notes_written = [r for s, r in written if s == "notes"]
+        for record in notes_written:
+            self.assertGreaterEqual(
+                _normalize(record["modification_date"]),
+                bookmark_date,
+                msg="Resumed child sync must not replay notes records before the bookmark",
+            )
+
+    def test_interrupted_full_table_child_stream_always_fully_replicates(self):
+        """
+        A FULL_TABLE child stream (contacts) must replicate all records even
+        when stale state is present — it has no bookmark to interrupt on.
+        """
+        stale_state = {"bookmarks": {}}
+        parent_records = [{"id": 123, "name": "Test Campaign"}]
+        child_records = [{"id": i, "name": f"Contact {i}"} for i in range(1, 6)]
+        child_endpoint_config = {
+            "path": "Campaigns/{}/Contacts",
+            "data_key": "Contacts",
+            "key_properties": ["id"],
+            "replication_method": "FULL_TABLE",
+            "parent": "campaigns",
+        }
+
+        written, final_state = self._sync_with_children(
+            "campaigns", "Campaigns", parent_records,
+            "contacts", child_endpoint_config, "Contacts", child_records,
+            state=stale_state,
+        )
+
+        contacts_written = [r for s, r in written if s == "contacts"]
+        self.assertEqual(
+            len(contacts_written), 5,
+            msg="All 5 FULL_TABLE child records must be written regardless of stale state",
+        )
+        self.assertNotIn(
+            "contacts", final_state.get("bookmarks", {}),
+            msg="FULL_TABLE child stream must not write a bookmark",
+        )
