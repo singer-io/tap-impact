@@ -19,3 +19,15 @@ tap_impact/.vscode/settings.json
 *.ipynb
 tap_target_commands.sh
 .DS_Store
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/

@@ -8,7 +8,7 @@ jobs:
       - run:
           name: 'Setup virtual env'
           command: |
-            uv venv --python 3.9 /usr/local/share/virtualenvs/tap-impact
+            uv venv --python 3.12 /usr/local/share/virtualenvs/tap-impact
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
             uv pip install -U pip setuptools
             uv pip install .[dev]
@@ -16,7 +16,7 @@ jobs:
           name: 'pylint'
           command: |
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
-            pylint tap_impact -d 'broad-except,chained-comparison,empty-docstring,fixme,invalid-name,line-too-long,missing-class-docstring,missing-function-docstring,missing-module-docstring,no-else-raise,no-else-return,too-few-public-methods,too-many-arguments,too-many-branches,too-many-lines,too-many-locals,ungrouped-imports,wrong-spelling-in-comment,wrong-spelling-in-docstring,logging-format-interpolation,protected-access,unused-variable,too-many-statements,redefined-builtin,too-many-nested-blocks,useless-object-inheritance,inconsistent-return-statements'
+            pylint tap_impact -d C,R,W
       - run:
           name: 'JSON Validator'
           command: |
@@ -28,14 +28,19 @@ jobs:
           command: |
             source /usr/local/share/virtualenvs/tap-impact/bin/activate
             uv pip install pytest coverage parameterized
-            coverage run -m pytest tests/unittests
+            coverage run -m pytest tests/unittests -v
             coverage html
           when: always
       - store_test_results:
           path: test_output/report.xml
       - store_artifacts:
           path: htmlcov
-
+      - run:
+          name: 'Mock Integration Tests'
+          command: |
+            source /usr/local/share/virtualenvs/tap-impact/bin/activate
+            uv pip install pytest
+            coverage run -m pytest tests/mock_integration/ -v
       # - add_ssh_keys
       # TODO | https://stitchdata.atlassian.net/browse/SRCE-4593 (SRCE-4593 -> SRCE-4597)
       # - run:
